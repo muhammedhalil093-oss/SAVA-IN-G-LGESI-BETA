@@ -1,0 +1,748 @@
+<!DOCTYPE html><html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>1914 — Bir Askerin Hikâyesi</title><meta name="color-scheme" content="dark">
+<link href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Special+Elite&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0c0d0a;--paper:#e9e0c8;--ink:#d9d0b8;--brass:#c2a05a;--blood:#a63a2e;--panel:#14150fee;--line:#4a4632;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html,body{margin:0;height:100%;background:#000;color:var(--ink);font:17px "IM Fell English",Georgia,serif;overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none}
+canvas{position:fixed;inset:0;width:100%;height:100%;display:block}.hide{display:none!important}.t{font-family:"Special Elite","Courier New",monospace;letter-spacing:.04em}
+button{font:inherit;color:var(--ink);background:#1d1e15;border:1px solid var(--brass);padding:10px 16px;border-radius:2px;min-height:44px}button:active,button.on{background:var(--brass);color:#14150f}button[disabled]{opacity:.4}
+.scr{position:fixed;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:14px;background:radial-gradient(ellipse at center,#14150fb0,#050604f2);overflow:auto;touch-action:pan-y;z-index:20;text-align:center}.scr.show{display:flex}
+.scr h1{margin:0;font-weight:400;font-size:clamp(34px,8vw,68px);letter-spacing:.12em;color:var(--paper);text-shadow:0 2px 0 #000}.scr h2{margin:0;font-weight:400;color:var(--brass);font-size:24px}.menu button{min-width:240px;font-size:18px}
+.panel{background:var(--panel);border:1px solid var(--line);padding:14px;max-width:560px;width:min(94vw,560px);text-align:left;max-height:70vh;overflow:auto;touch-action:pan-y;user-select:text}
+.row{display:flex;gap:8px;align-items:center;justify-content:space-between;margin:6px 0}.row input[type=range]{flex:1}.sub{color:#9a9278;font-size:14px}
+.bar{position:fixed;left:0;right:0;height:0;background:#000;transition:height .5s;z-index:5}.bar.on{height:9vh}#l1{top:0}#l2{bottom:0}
+#hud{position:fixed;inset:0;pointer-events:none;z-index:6}#hud>*{pointer-events:auto}
+#obj{position:absolute;left:10px;top:calc(10px + env(safe-area-inset-top,0px));max-width:min(300px,64vw);background:#0c0d0acc;border-left:3px solid var(--brass);padding:6px 10px;font-size:14px}#obj ul{margin:4px 0 0;padding:0;list-style:none}#obj li{margin:2px 0}#obj li.d{color:#7a8a5a;text-decoration:line-through}
+#top2{position:absolute;right:10px;top:calc(10px + env(safe-area-inset-top,0px));display:flex;gap:6px;align-items:center}#top2 button{padding:6px 10px;min-height:38px}#loc{font-size:13px;color:#9a9278;max-width:34vw;text-align:right}
+#hpb{width:70px;height:7px;background:#2a1a16;border:1px solid var(--line)}#hpb i{display:block;height:100%;background:var(--blood);width:100%}
+#prompt{position:absolute;left:50%;bottom:calc(120px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:#0c0d0ae6;border:1px solid var(--brass);padding:8px 16px;white-space:nowrap}
+#joy{position:absolute;left:14px;bottom:calc(20px + env(safe-area-inset-bottom,0px));width:120px;height:120px;border-radius:50%;border:2px solid #c2a05a66;background:#0c0d0a66;touch-action:none}#joy i{position:absolute;left:40px;top:40px;width:40px;height:40px;border-radius:50%;background:#c2a05a99}
+#bAct{position:absolute;right:16px;bottom:calc(30px + env(safe-area-inset-bottom,0px));width:96px;height:96px;border-radius:50%;font-size:15px}#bRun{position:absolute;right:20px;bottom:calc(140px + env(safe-area-inset-bottom,0px));width:70px;height:70px;border-radius:50%;font-size:13px}
+#flash{position:fixed;inset:0;background:#a02010;opacity:0;pointer-events:none;transition:opacity .5s;z-index:7}
+#dlg{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(10px + env(safe-area-inset-bottom,0px));width:min(780px,96vw);background:#0b0c09f0;border:1px solid var(--brass);padding:12px 16px;z-index:9;min-height:130px;max-height:62vh;overflow:auto;touch-action:pan-y}
+#dname{font-family:"Special Elite",monospace;font-size:15px;margin-bottom:4px}#dtext{font-size:19px;line-height:1.45;min-height:56px}#dtext.n{font-style:italic;color:#bfb7a0}
+#dch button{display:block;width:100%;text-align:left;margin-top:10px;min-height:52px;font-size:17px}#dch button.sel{background:var(--brass);color:#14150f}#dhint{font-size:13px;color:#8a8268;text-align:right;margin-top:6px}
+#toast{position:fixed;left:50%;top:calc(70px + env(safe-area-inset-top,0px));transform:translateX(-50%);background:#0c0d0af0;border:1px solid var(--brass);padding:8px 14px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:30;max-width:90vw;text-align:center}
+.card p{max-width:560px;line-height:1.6;font-size:19px;color:#cfc6ac}.bars div{display:flex;gap:8px;align-items:center;font-size:14px;margin:3px 0}.bars span.b{flex:1;height:6px;background:#2a2a1c;position:relative}.bars span.b i{position:absolute;left:50%;height:100%;background:var(--brass)}
+.tabs{display:flex;gap:4px;flex-wrap:wrap}.hist{margin:0;padding-left:18px}.hist li{margin:5px 0}.end h1{font-size:clamp(30px,7vw,56px)}.end p{max-width:600px;line-height:1.6}
+input[type=file],select,input[type=number]{background:#0c0d0a;color:var(--ink);border:1px solid var(--line);padding:6px;font:inherit;max-width:100%}
+</style></head><body>
+<canvas id="gl"></canvas><div class="bar" id="l1"></div><div class="bar" id="l2"></div><div id="flash"></div>
+<div id="hud" class="hide"><div id="obj"><b class="t">GÖREVLER</b><ul id="objl"></ul></div>
+<div id="top2"><span id="loc"></span><div id="hpb"><i></i></div><button id="bJour">📖</button><button id="bPause">☰</button></div>
+<div id="prompt" class="hide"></div><div id="joy"><i></i></div><button id="bRun">KOŞ</button><button id="bAct">KONUŞ</button></div>
+<div id="dlg" class="hide"><div id="dname" class="t"></div><div id="dtext"></div><div id="dch"></div><div id="dhint"></div></div><div id="toast"></div>
+<div class="scr menu" id="menu"><div class="t sub">BİRİNCİ DÜNYA SAVAŞI · SİNEMATİK KARAR OYUNU</div><h1>1914</h1><div class="t" style="color:var(--brass);letter-spacing:.2em">BİR ASKERİN HİKÂYESİ</div><br>
+<button id="mNew">YENİ OYUN</button><button id="mCont">DEVAM ET</button><button id="mSave">KAYIT / YÜKLE</button><button id="mSet">AYARLAR</button><button id="mImp">MODEL İÇE AKTAR</button><button id="mAbout">HAKKINDA</button></div>
+<div class="scr" id="settings"><h2 class="t">AYARLAR</h2><div class="panel">
+<div class="row"><span>Ana ses</span><input type="range" id="sM" min="0" max="1" step=".05"></div><div class="row"><span>Müzik</span><input type="range" id="sMu" min="0" max="1" step=".05"></div><div class="row"><span>Efektler</span><input type="range" id="sSf" min="0" max="1" step=".05"></div>
+<div class="row"><span>Grafik kalitesi</span><select id="sQ"><option value="0">Düşük</option><option value="1">Orta</option><option value="2">Yüksek</option></select></div>
+<div class="row"><span>Yazı hızı</span><select id="sTs"><option value="1">Normal</option><option value="2">Hızlı</option><option value="0.5">Yavaş</option><option value="0">Anında</option></select></div>
+<div class="row"><span>Seçenekleri çift dokunuşla onayla</span><input type="checkbox" id="sCf"></div></div><button id="setBack">GERİ</button></div>
+<div class="scr" id="pause"><h2 class="t">DURAKLATILDI</h2><div class="menu" style="display:flex;flex-direction:column;gap:8px"><button id="pRes">DEVAM</button><button id="pJour">GÜNLÜK</button><button id="pSave">KAYIT / YÜKLE</button><button id="pSet">AYARLAR</button><button id="pMenu">ANA MENÜ</button></div></div>
+<div class="scr" id="saves"><h2 class="t">KAYIT / YÜKLE</h2><div class="panel" id="slots"></div><div class="row"><button id="exp">DIŞA AKTAR (.json)</button><label class="t"><input type="file" id="impS" accept=".json" class="hide"><span class="sub">İÇE AKTAR: </span></label><button id="impSb">DOSYA SEÇ</button></div><button id="saveBack">GERİ</button></div>
+<div class="scr" id="journal"><h2 class="t">GÜNLÜK</h2><div class="tabs"><button data-j="q">Görevler</button><button data-j="h">Kararlar</button><button data-j="c">Karakterler</button><button data-j="p">Sözler & Kanıt</button></div><div class="panel" id="jbody"></div><button id="jBack">KAPAT</button></div>
+<div class="scr" id="import"><h2 class="t">MODEL İÇE AKTAR</h2><div class="panel"><div class="sub">GLB (önerilir) veya tek dosyalı glTF. Animasyon adları: idle/stand, walk/run, talk/speak. Ölçek boş bırakılırsa otomatik (1 birim = 1 m).</div>
+<div class="row"><span>Rol</span><select id="iRole"></select></div><div class="row"><span>Dosya</span><input type="file" id="iFile" accept=".glb,.gltf,.obj,.fbx"></div>
+<div class="row"><span>Ölçek</span><input type="number" id="iScale" step="0.01" placeholder="oto"></div><div class="row"><span>Yükseklik ofseti (m)</span><input type="number" id="iY" step="0.05" value="0"></div><div class="row"><span>Dönüş (derece)</span><input type="number" id="iRot" step="15" value="0"></div>
+<div class="row"><button id="iGo">YÜKLE</button><button id="iReset">ROLÜ SIFIRLA</button></div><div id="iMsg" class="sub" style="white-space:pre-wrap"></div></div><button id="iBack">GERİ</button></div>
+<div class="scr" id="about"><h2 class="t">HAKKINDA</h2><div class="panel"><p><b>Gerçek olaylar:</b> Ağustos 1914 seferberliği, Mons’tan geri çekilme ve Aisne (Eylül 1914), Birinci Ypres Muharebesi (Ekim–Kasım 1914), 1914 Noel Ateşkesi.</p><p><b>Kurgusal:</b> Alay, köyler, bütün karakterler ve diyaloglar. Askerî polis, Alman anti-sempatisi ve sahra hastaneleri dönemin gerçeklerinden ilham alır.</p><p>Kontroller: WASD/ok tuşları hareket, Shift koş, E / Boşluk etkileşim, fare sürükle kamera, Esc duraklat, J günlük, 1–4 seçenek.</p></div><button id="abBack">GERİ</button></div>
+<div class="scr card" id="card"><div class="t sub" id="cDate"></div><h1 id="cTitle" style="font-size:clamp(28px,6vw,52px)"></h1><p id="cText"></p><div class="sub t" id="cHint">devam etmek için dokun</div></div>
+<div class="scr" id="summary"><h2 class="t" id="sTitle"></h2><div class="panel"><b>Bu bölümde verdiğin kararlar</b><ul class="hist" id="sHist"></ul><div class="bars" id="sBars"></div><p class="sub">Bazı kararların sonuçları sonraki bölümlerde ve finalde ortaya çıkacak.</p></div><button id="sGo">DEVAM</button></div>
+<div class="scr end" id="ending"><div class="t sub" id="eTag"></div><h1 id="eTitle"></h1><div class="panel" style="text-align:center" id="eBody"></div><div class="row"><button id="eMenu">ANA MENÜ</button><button id="eNew">YENİDEN BAŞLA</button></div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/utils/SkeletonUtils.js"></script>
+<script>/* src/state.js */
+/* 1914 — OYUN DURUMU, ETKİ DİLİ, KAYIT SİSTEMİ
+   Bütün hikâye değişkenleri tek bir nesnede (S) tutulur ve JSON olarak kaydedilir. */
+(function(G){
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+function fresh(){return{v:1,ch:1,loc:'camp',hp:100,rep:0,
+ f:{},                                   // bayraklar: yaşanan olaylar
+ t:{hale:0,finch:0,doyle:0,weiss:0,pem:0,clara:0}, // güven (-5..5)
+ ev:{},pr:{},pk:{},pb:{},                // kanıtlar, verilen / tutulan / bozulan sözler
+ dead:{},hist:[],seen:{},ps:null,done:{}}}
+let S=fresh();
+G.S=()=>S;G.newState=()=>(S=fresh());G.clamp=clamp;
+/* ETKİ DİLİ — "+bayrak; -bayrak; t.finch+2; rep-1; hp-25; ev.kanit; pr.soz; pk.soz; pb.soz; dead.finch; log=Karar metni" */
+G.fx=function(str){if(!str)return;if(typeof str=='function')str=str(S);
+ for(let p of str.split(';')){p=p.trim();if(!p)continue;let m;
+  if(m=p.match(/^t\.(\w+)([+-]\d+)$/))S.t[m[1]]=clamp((S.t[m[1]]||0)+ +m[2],-5,5);
+  else if(m=p.match(/^rep([+-]\d+)$/))S.rep=clamp(S.rep+ +m[1],-5,5);
+  else if(m=p.match(/^hp([+-]\d+)$/))S.hp=clamp(S.hp+ +m[1],0,100);
+  else if(m=p.match(/^(ev|pr|pk|pb|dead)\.(\w+)$/))S[m[1]][m[2]]=1;
+  else if(m=p.match(/^log=(.+)$/))G.log(m[1]);
+  else if(p[0]=='+')S.f[p.slice(1)]=1;
+  else if(p[0]=='-')delete S.f[p.slice(1)];}};
+G.log=text=>S.hist.push({ch:S.ch,text,n:S.hist.length});
+G.alive=id=>!S.dead[id];
+/* KAYIT — yuva 0 otomatik kayıt, 1-3 elle kayıt. Dosya olarak dışa/içe aktarılabilir. */
+const KEY='1914_save_';
+G.save=slot=>{try{localStorage.setItem(KEY+slot,JSON.stringify({d:new Date().toLocaleString('tr'),ts:Date.now(),ch:S.ch,state:S}));return true}catch(e){return false}};
+G.load=slot=>{try{const j=JSON.parse(localStorage.getItem(KEY+slot));if(!j)return false;S=Object.assign(fresh(),j.state);return true}catch(e){return false}};
+G.slotInfo=slot=>{try{const j=JSON.parse(localStorage.getItem(KEY+slot));return j&&{d:j.d,ch:j.ch,ts:j.ts||0}}catch(e){return null}};
+G.hasSave=()=>[0,1,2,3].some(s=>G.slotInfo(s));
+G.exportSave=()=>JSON.stringify({game:'1914',state:S});
+G.importSave=txt=>{const j=JSON.parse(txt);if(!j||j.game!='1914'||!j.state)throw new Error('Geçersiz kayıt dosyası');S=Object.assign(fresh(),j.state)};
+})(window.G=window.G||{});
+
+</script>
+<script>/* src/story.js */
+/* 1914 — HİKÂYE: karakterler, diyaloglar, bölümler, görevler, finaller.
+   Diyalog düğümü: [konuşan, metin, sonraki|seçenekler, etki]
+   Seçenek:        [metin, etki, gidilecek düğüm|null, koşul?] */
+(function(G){
+const C={_:{n:'',c:'#bfb7a5'},alder:{n:'Thomas Alder',c:'#e8d9a0'},
+ hale:{n:'Çavuş Hale',c:'#e09a55',age:38,bio:'Boer Savaşı gazisi. Sert, adil, genç askerleri korumaya takıntılı. Geçmişinde ağır bir sır taşıyor.'},
+ finch:{n:'Er Finch',c:'#8cc4e8',age:19,bio:'Korkak sanılan ama kalbi büyük bir çocuk. Annesine her hafta mektup yazıyor.'},
+ doyle:{n:'Er Doyle',c:'#9bd68a',age:29,bio:'Alaycı İrlandalı. Kurnaz görünür; sırrı bir merhamet.'},
+ weiss:{n:'Er Weiss',c:'#c9a0e0',age:26,bio:'Hamburglu terzinin oğlu, Bristol doğumlu. Almanca bilmesi yüzünden dışlanıyor.'},
+ pem:{n:'Teğmen Pemberton',c:'#e8c070',age:22,bio:'Genç, cesur, kitaplardan öğrenmiş bir subay. Emir ile vicdan arasında kalıyor.'},
+ bell:{n:'Çavuş Bell',c:'#d09090'},ward:{n:'Yüzbaşı Ward',c:'#e8c070'},marie:{n:'Marie',c:'#e8a0b8'},
+ clara:{n:'Hemşire Whitby',c:'#f0f0f0',age:30,bio:'Sahra hastanesinin yorgun ama vazgeçmeyen hemşiresi.'},
+ gage:{n:'Çavuş Gage (Askerî Polis)',c:'#e07070'},karl:{n:'Karl',c:'#9ab8c8'}};
+const D={};const dl=(id,o)=>D[id]=o;
+/* ================= BÖLÜM 1: ÇAĞRI ================= */
+dl('hale_a',{
+a:['hale','Er Alder! Altı dakika geç kaldın. Burası pazar yeri değil; sırada beklemeyi öğreneceksin.','b'],
+b:['hale','Kayıtlarda adın var: Thomas Alder, yedek alay. Neden buradasın, evlat?',[
+ ['Görev çağırdı, Çavuş. Yedek asker olarak geldim.','+motive_duty;t.hale+1;log=Askere gelme sebebin: görev duygusu','c'],
+ ['Maaşa ihtiyacım var. Borçlarım var.','+motive_money;log=Askere gelme sebebin: borç ve maaş','c'],
+ ['Evde beni tutan hiçbir şey kalmadı.','+motive_escape;log=Askere gelme sebebin: kaçış','c']]],
+c:['hale',S=>S.f.motive_duty?'Güzel söz. Siperde sözler çamura gömülür ama duyduğuma memnunum.':S.f.motive_money?'Dürüstsün, bu da bir şey. Üç kuruş için ölmeye değer mi, yakında öğrenirsin.':'Kaçanlar siperde ilk kırılanlardır. Ama bazen en çok dövüşenler de onlardır.','d'],
+d:['hale','Manganı avluda bulursun: Finch, Doyle, Weiss. Hepsiyle konuş. Çabuk!',null,'+met_hale']});
+dl('finch_a',{
+a:['finch','Selam... Ben Edward Finch. Herkes bana Eddie der. Sen de ilk kez mi cepheye gidiyorsun?','b'],
+b:['finch','Annem her hafta mektup yazacağıma söz verdirdi. Yazarsam... yani eğer yazarsam, kimse gülmez, değil mi?',[
+ ['Kimse gülmez, Eddie. Yazmaya devam et.','t.finch+2;+finch_kind','c'],
+ ['Kimin ne düşündüğü önemli değil. Hayatta kal yeter.','t.finch+1','c'],
+ ['Siperde mektup yazmaya vakit kalmaz.','t.finch-1;+finch_hurt','c']]],
+c:['_','Eddie başını sallayıp katlanmış bir mektubu cebine tıkıyor.',null,'+met_finch']});
+dl('doyle_a',{
+a:['doyle','Yeni çocuk! Jack Doyle. Cebinde sigara var mı? Yok mu? Neyse, ahlaksızlığın sevimli tarafıyla tanışmış oldun.','b'],
+b:['doyle','“Noel’e kadar biter” diyorlar. Generaller hiç yanılmaz tabii... yanılmaz mı?',[
+ ['Umarım haklılardır. Eve dönmek istiyorum.','+doyle_hopeful','c'],
+ ['Generaller sıcak odada oturur, biz çamurda ölürüz.','t.doyle+2;+doyle_bonded','c'],
+ ['Sessiz ol Doyle, moral bozuyorsun.','t.doyle-1;+doyle_clash','c']]],
+c:['_','Doyle gözünü kırpıyor ama bakışı bir an çite doğru kayıyor.',null,'+met_doyle']});
+dl('weiss_a',{
+a:['weiss','Samuel Weiss. Evet, soyadım Alman. Babam Hamburglu terzi, ben Bristol’da doğdum. Sorarsan zaman kazanırız.','b'],
+b:['weiss','Manga içinde bana “casus” diyenler var. Sen ne düşünüyorsun, Alder?',[
+ ['Hepimiz aynı üniformayı giyiyoruz, Weiss.','t.weiss+2;+weiss_trust','c'],
+ ['Dikkatli ol. Millet gergin.','+weiss_wary','c'],
+ ['Alman kanı Alman kanıdır. Seni izleyeceğim.','t.weiss-2;+weiss_hostile','c']]],
+c:['_','Weiss üniformasının içine küçük bir terzi makası madalyonu saklıyor.',null,'+met_weiss']});
+dl('hale_inc',{
+a:['_','Bir bağrış duyuluyor. Levazım Çavuşu Bell, elinde boş bir sandıkla avluya dalıyor.','b','+incident_started'],
+b:['bell','Hale! Üç düzine bisküvi ve on iki kutu konserve kayıp! Dün gece sandıkların yanında Finch vardı!','c'],
+c:['finch','H-hayır çavuş, ben sadece nöbetteydim... Ben hiçbir şey çalmadım. Lütfen!','d'],
+d:['hale','Alder. Sen de manganın adamısın. Ne söylüyorsun?',[
+ ['Finch’i savunuyorum. Böyle bir şey yapacak biri değil.','+defended_finch;t.finch+3;log=Finch’i herkesin önünde savundun','def'],
+ ['Hiçbir şey demeden bekliyorum.','+silent;t.finch-2;log=Finch suçlanırken sessiz kaldın','sil'],
+ ['Önce kanıt olsun. Sandıkları ve çevreyi inceleyeyim.','+investigating;t.hale+1;log=Olayı kendin araştırmaya karar verdin','inv']]],
+def:['bell','Savunmayla erzak geri gelmez evlat! Yarına kadar bulunmazsa Finch’in ücreti kesilir.','def2'],
+def2:['hale','O çocuğun yükünü üstüne aldın. Sandıklara ve çite bak; umarım yanılmıyorsundur.',null,'+investigating'],
+sil:['bell','Anlaştık o zaman. Finch’in ücretinden keseceğim ve kayıtlara geçeceğim.','sil2','+finch_punished'],
+sil2:['hale','Hale sana uzun bir bakış atıyor. Hiçbir şey söylemiyor.',null,'+incident_done;t.hale-1'],
+inv:['bell','Bakın bakalım. Ama sabaha kadar bulamazsanız Finch’in ücreti kesilir.','inv2'],
+inv2:['hale','Sandıklar avluda, çit tarafı doğuda. Yanlış taşın altına bakma, Alder.',null]});
+dl('crates_look',{a:['_',S=>S.f.investigating?'Sandıkların kilidi zorlanmamış ama kapak çivileri dışarıdan sökülüp yeniden çakılmış. Yerde geniş bot izleri çite doğru gidiyor.':'Levazım sandıkları. Kapakları sıkıca çivilenmiş.',null,S=>S.f.investigating?'+clue1;ev.boot_prints':'']});
+dl('fence_look',{a:['_',S=>S.f.investigating?'Çitin bir tahtası gevşek. Ardında boş konserve kapakları ve ufacık, çamurlu ayak izleri var. Biri bunları bir çocuğa taşımış.':'Gevşek bir çit tahtası. Ardı çamurlu bir patika.',null,S=>S.f.investigating?'+clue2;ev.tin_lids':'']});
+dl('board_look',{a:['_','Çağrı afişi: “KRAL VE VATAN SİZİ ÇAĞIRIYOR.” Altına biri kurşun kalemle yazmış: “Noel’e kadar biter?”',null]});
+dl('hale_rep',{
+a:['hale','Bir şey buldun mu, Alder?','b'],
+b:['hale','Tenekeler çitin ardında bulunmuş, küçük ayak izleri varmış... Anlat bakalım.',[
+ ['Sorumlu Doyle. Bell’e bildireceğim.','+reported_doyle;t.doyle-3;t.hale+1;rep+1;log=Doyle’u erzak hırsızlığıyla ihbar ettin','rep'],
+ ['Kimin yaptığını biliyorum ama söylemeyeceğim. Finch aklansın, olay kapansın.','+covered_doyle;t.doyle+3;log=Doyle’un sırrını sakladın','cov'],
+ ['Önce Doyle ile konuşmam gerek. Bana bir gece ver.','+confront_doyle;log=Önce Doyle ile yüzleşmeyi seçtin','conf']]],
+rep:['hale','Erzak hırsızlığı ciddi suç. Doyle ağır ceza alacak. Doğru olanı yaptığını umuyorum.','rep2','+doyle_punished'],
+rep2:['_','Doyle sana soğuk bir bakış atıyor. Finch rahatlamış ama gözleri yere eğik.',null,'+incident_done;+finch_cleared'],
+cov:['hale','Bell’e “yanlış sayım” raporu veririm. Ama bu konuyu sonra konuşacağız.','cov2'],
+cov2:['_','Finch aklanıyor. Doyle sessizce başını sallıyor: bir borç doğdu.',null,'+incident_done;+finch_cleared;+doyle_owes'],
+conf:['doyle','Yeter, biliyorum bildiğini. Köydeki bir aileye... çocuklar aç. Bunu duyarlarsa beni asarlar.','conf2','+doyle_secret_known'],
+conf2:['doyle','Bana yarına kadar zaman ver; sonra her şeyi ben anlatırım.',[
+ ['Tamam. Ama bu son. Sonra Hale’e kendin anlatacaksın.','+doyle_promise;t.doyle+2;pr.doyle_confess;log=Doyle’a bir gece ve söz verdin','cf'],
+ ['Hayır. Şimdi Hale’e gidiyoruz.','+reported_doyle;t.doyle-3;log=Doyle’u yüzüne karşı ihbar ettin','cf2']]],
+cf:['_','Doyle’un omuzları gevşiyor. Finch’in suçlaması “kayıt hatası” olarak kapanıyor.',null,'+incident_done;+finch_cleared'],
+cf2:['hale','Doğru olanı yaptın ama doğru olan her zaman iyi olan değildir, Alder.',null,'+incident_done;+finch_cleared;+doyle_punished']});
+dl('bell_a',{a:['bell','Kayıtlar tutulacak, sayımlar yapılacak. Devlet erzakı oyuncak değildir!',null]});
+dl('pem_o',{
+a:['pem','Çavuş Hale’in mangası mı? Yarın şafakta Southampton’dan vapura biniyoruz: Fransa. Alder, ilk kez mi cepheye gidiyorsun?','b'],
+b:['pem','Korkmanız doğal ama görevimiz net: hattı tutacağız. Soru var mı?',[
+ ['Hazırım, Teğmenim.','+pem_ready;t.pem+1','c'],
+ ['Korkuyorum ama kalacağım.','t.pem+1;t.hale+1','c'],
+ ['Siperde aklımızı kullanabilir miyiz, yoksa yalnızca emir mi?','+pem_questioned;t.pem-1;t.hale+1','c']]],
+c:['_','Gece trenle yola çıkıyorsunuz. Yağmur camlara vuruyor; Eddie’nin kalemi kâğıt üstünde titriyor.',null,'+ch1_end']});
+/* ================= BÖLÜM 2: HAT ================= */
+dl('pem_order',{
+a:['pem','Alder! Alay çekilirken çiftlik evini tutacağız. Hale’in mangası pencereleri alsın. Bu mesaj da Yüzbaşı Ward’a gitmeli; tarla topçu ateşi altında.','b'],
+b:['pem','Alman öncüleri iki saat içinde burada. Emir tartışmaya açık değil, ama fikrin var mı?',[
+ ['Emredersiniz Teğmenim. Çiftlik evini tutarız.','+order_obey;t.pem+2;log=Çiftlik evini tutma emrine itaat ettin','c'],
+ ['Çiftlik evi yanlardan sarılır. Hendeği tarlaya kazmak daha iyi değil mi?','+order_question;t.hale+1;log=Pemberton’un emrini sorguladın','q'],
+ ['Weiss Almanca biliyor. Ele geçirdiğimiz haritayı ona okutalım.','+order_weiss;t.weiss+2;t.pem+1;log=Weiss’in Almanca bilgisini kullandırdın','w']]],
+c:['pem','İyi. Haberi taşı; Ward tarlanın ötesinde.',null,'+got_order;+has_message;+finch_missing'],
+q:['pem','Cesaretini takdir ederim ama komuta bende. Yine de kenar pencerelere iki adam daha koyacağım.',null,'+got_order;+has_message;+hold_modified;+finch_missing'],
+w:['weiss','Harita Almanca: “Ana kol kuzeybatıdan geliyor, köprü yarım saate patlatılacak.” Teğmenim, çiftlik yerine köprü ardını tutmalıyız!','w2','+weiss_map'],
+w2:['pem','İyi gözlem, Weiss. Planı değiştiriyorum. Alder, mesajı Ward’a götür.',null,'+got_order;+has_message;+plan_changed;t.weiss+1;+finch_missing']});
+dl('ward_a',{
+a:['ward',S=>S.f.plan_changed?'Köprü ardını tutma planı akıllıca. Mesaj için sağ ol; sana ek mühimmat veriyorum.':S.f.order_obey?'Çiftlik evini tutmak mı? O ev yanlardan sarılır... Mesajı geç getirdin evlat. Tanrı yardımcınız olsun.':'Hendeği tarlaya kazma fikri? Cesur. Teğmene ilet: iki adamı fazladan gönderiyorum.',null,'+msg_delivered;+finch_missing']});
+dl('finch_barn',{
+a:['finch','Samanlıkta titriyor. Gitmem... gitmem lazım. Elim kıpırdamıyor, Alder.','b'],
+b:['finch','Beni vururlar, kaçak derler... Lütfen kimseye söyleme.',[
+ ['Korkmak ayıp değil, Eddie. Benimle gel, yanındayım.','t.finch+3;+finch_comforted;log=Finch’i korkusunda yalnız bırakmadın','c1'],
+ ['Kalk, mangana dön. Yoksa seni ihbar etmek zorunda kalırım.','t.finch-3;+finch_threatened;log=Finch’i firari olmakla tehdit ettin','c2'],
+ ['Hale’e bildireceğim. Kaçaklık yazılsın.','+finch_reported;t.finch-4;t.hale+2;rep-1;log=Finch’i Hale’e ihbar ettin','c3']]],
+c1:['finch','Eğer ben dönmezsem... mektubu annem’e verir misin? (Katlanmış bir mektup uzatıyor)',[
+ ['Söz veriyorum, Eddie.','pr.finch_letter;+has_letter;t.finch+1;log=Finch’e annesine mektubu götürme sözü verdin','c4'],
+ ['Dönmeyecek gibi konuşma. Mektubu kendin vereceksin.','t.finch+1','c4']]],
+c2:['_','Finch titreyen ellerle kalkıyor, gözleri sana kin dolu.',null,'+finch_found'],
+c3:['_','Finch kıstırılmış bir hayvan gibi sürükleniyor. Hale çenesini sıkıyor.',null,'+finch_found'],
+c4:['_','Finch yavaşça ayağa kalkıyor. Birlikte mangaya dönüyorsunuz.',null,'+finch_found']});
+dl('marie_a',{
+a:['marie','Lütfen... bizi bırakmayın. Kızım üç gündür doğru dürüst yemek yemedi.','b'],
+b:['marie',S=>(S.f.doyle_secret_known||S.f.covered_doyle||S.f.doyle_promise)?'Bir asker... Jack, bize konserve getiriyordu. Onu gördünüz mü?':S.f.reported_doyle?'(Yanında boş konserve kapakları; tanıdık geliyor. İhbar ettiğin adamın sırrı buymuş.)':'Mahzende kapaklar... İngiliz konserveleri. Biri bize yiyecek getiriyormuş.','c'],
+c:['marie','Ne yapacaksınız?',[
+ ['Size elimdekileri veriyorum. Burada bir süre daha dayanın.','+aided_marie;t.doyle+2;rep+1;log=Mahzendeki sivillere yardım ettin','m1'],
+ ['Burada kalmanız tehlikeli. Karargâha haber vereceğim, sizi tahliye ederler.','+marie_evac;t.hale+1;log=Sivilleri tahliye için bildirdin','m2'],
+ ['Kimse bilmesin. Sessiz kalın.','+marie_hidden;t.doyle+1;log=Sivillerin varlığını gizledin','m3']]],
+m1:['_','Marie gözlerini yumuyor. “Tanrı sizi korusun.” Mahzen kapısında Doyle’un silüeti beliriyor; gözleri dolu.',null,'+cellar_done'],
+m2:['_','Pemberton tahliye için bir at arabası ayarlıyor ama zaman kaybı yaşanıyor.',null,'+cellar_done'],
+m3:['_','Marie başını sallıyor. Sessizce mahzenin kapağını örtüyorsun.',null,'+cellar_done']});
+dl('doyle_d1',{a:['doyle','Beni ihbar edenle yan yana siper kazıyorum. Hayat ne ironik, Alder.',null]});
+dl('doyle_d2',{a:['doyle','Bir borcum var sana. Ayakta kalırsak öderim, bu bir söz.',null,'+doyle_debt']});
+dl('doyle_d3',{a:['doyle',S=>S.t.doyle>=2?'Sözümü tuttum, Hale’e her şeyi anlattım. Bana bir şans verdi.':'Hale’e söyleyemedim... Utanıyorum. Belki sonra.','b'],
+ b:['_',S=>S.t.doyle>=2?'Doyle sana minnetle başını eğiyor.':'Doyle gözlerini kaçırıyor; sözünü tutamadı.',null,S=>S.t.doyle>=2?'+doyle_confessed;pk.doyle_confess':'pb.doyle_confess']});
+dl('doyle_d0',{a:['doyle','Siperde gülmeyi unutma, Alder. Gülmeyi unutan ilk ölür.',null]});
+dl('weiss_d1',{a:['weiss',S=>S.f.weiss_trust?'Almanca haritayı okurken elim titredi. Ama sen bana güvendin; bu çok şey.':S.f.weiss_hostile?'Benden uzak dur, Alder. İzlediğini görüyorum.':'Almanlar benim akrabam olabilir ama düşmanım değiller. Garip bir savaş.',null]});
+dl('hale_d1',{a:['hale',S=>S.f.order_obey?'Teğmenin emri... Çiftlik evi bir ölüm tuzağı. Ama emir emirdir.':S.f.plan_changed?'Köprü ardı iyi bir seçim. Kim düşündü? Weiss mi? Çocuk zekiymiş.':'Pencerelere ek adam koydular. Yine de içim rahat değil.',null]});
+dl('pem_rep',{
+a:['pem','Raporunu dinliyorum, Alder.','b'],
+b:['pem','Mesaj ulaştı, Finch bulundu, mahzen kontrol edildi. İyi. Çünkü Almanlar geliyor: hazır olun!','c','+skirmish'],
+c:['_',S=>S.f.plan_changed?'Köprü ardındaki mevziler Alman öncüsünü kısa sürede durduruyor. Kayıp yok. Pemberton ilk büyük sınavını geçiyor.':S.f.order_question?'Yan pencerelerdeki ek adamlar hayat kurtarıyor ama Hale omzundan sıyrılıyor.':'Çiftlik evi yanlardan sarılıyor. Doyle ağır yaralanıyor; Hale onu sırtında taşıyor.','d',S=>S.f.plan_changed?'+bridge_held':S.f.order_question?'+hale_wounded;t.hale+1':'+doyle_wounded;log=Çiftlik evi emri yüzünden Doyle ağır yaralandı'],
+d:['pem','Geri çekiliyoruz. Yaralıları sahra hastanesine taşıyın. Bu savaşın gerçek yüzünü yeni görüyoruz.',null,'+ch2_end']});
+/* ================= BÖLÜM 3: HASTANE ================= */
+dl('clara_a',{
+a:['clara','Bir yaralı daha mı? Hayır, sen yürüyorsun. Adın?','b'],
+b:['clara',S=>'Burada iki ağır yaralımız var ve tek ambulans arabası. Biri Finch, diğeri '+(S.f.triageB=='hale'?'Çavuş Hale':'Doyle')+'. Yardım eder misin?',[
+ ['Elbette, Hemşire. Ne yapmam gerek?','t.clara+1;+clara_helped','c'],
+ ['Ben de yorgunum. Başkasına sorun.','t.clara-1;+clara_cold','c']]],
+c:['clara','Morfin, sargı ve temiz su lazım. Barakada ara. Hepsini bulursan ikisini de kurtaracak bir yol bulabiliriz.',null,'+met_clara']});
+dl('sup_m',{a:['_','Cam şişelerde morfin buldun.',null,'+sup_m']});
+dl('sup_b',{a:['_','Temiz sargı bezleri ve karbolik asit.',null,'+sup_b']});
+dl('sup_w',{a:['_','Kaynatılmış temiz su dolu varil.',null,'+sup_w']});
+dl('clara_t',{
+a:['clara',S=>'Malzemeler tamam. Finch ve '+(S.f.triageB=='hale'?'Hale':'Doyle')+' ikisi de kötü. Tek araba var. Karar senin, Alder.',[
+ [S=>'Finch’i gönder. Çocuk genç, şansı var.',S=>'+triage_finch;t.finch+2;t.clara+1;dead.'+S.f.triageB+';log=Doktora giden arabayı Finch’e verdin; '+(S.f.triageB=='hale'?'Hale':'Doyle')+' öldü','end'],
+ [S=>(S.f.triageB=='hale'?'Hale’i':'Doyle’u')+' gönder. Deneyimli bir asker.',S=>'+triage_other;t.'+S.f.triageB+'+2;dead.finch;log=Arabayı '+(S.f.triageB=='hale'?'Hale’e':'Doyle’a')+' verdin; Finch öldü','end'],
+ ['Morfini bölüştürelim; arabayı dönüşümlü kullanalım. Sana güveniyorum.','+triage_both;t.clara+2;rep+1;log=Hemşire ile birlikte ikisini de kurtardın','end',S=>S.f.sup_m&&S.f.sup_b&&S.f.sup_w&&S.t.clara>=1]]],
+end:['clara','Bu gece çok kişi ölecek. Sen en azından bir karar verdin.',null,'+triage_done']});
+dl('gage_a',{
+a:['gage','Er Weiss’in cebinden Almanca mektup çıktı. Casusluktan tutuklanıyor. Sen manga arkadaşısın, Alder. Ne diyeceksin?',[
+ ['Weiss yalan söylemez. Mektup babasından, ben şahitlik ederim.','+weiss_vouched;t.weiss+2;log=Weiss için şahitlik yaptın','vouch'],
+ ['Mektubu okuyalım. Zararsızsa serbest bırakın.','+weiss_letter;log=Mektubun açıkça okunmasını istedin','read'],
+ ['Ben bilmiyorum. Karışmak istemem.','+weiss_abandoned;t.weiss-3;log=Weiss tutuklanırken yanında durmadın','ab'],
+ ['Bence tutuklayın. Şüpheli biri.','+weiss_accused;t.weiss-5;rep-1;log=Weiss’i tutuklanması için işaret ettin','acc']]],
+vouch:['gage',S=>S.t.weiss>=2?'Şahitliğin ağırlıklı. Serbest, ama izleniyorsun, Weiss.':'Şahitliğin yeterli değil. Gözaltında kalıyor.',null,S=>S.t.weiss>=2?'+weiss_resolved;+weiss_free':'+weiss_resolved;+weiss_arrested'],
+read:['gage',S=>S.f.order_weiss?'Almanca harita okuyup yardım ettiğini biliyorum. Mektup zararsız: serbest.':'Mektup zararsız ama sicili bulanık. Gözaltı.',null,S=>S.f.order_weiss?'+weiss_resolved;+weiss_free;t.weiss+1':'+weiss_resolved;+weiss_arrested'],
+ab:['gage','Bu kadar. Götürün onu.',null,'+weiss_resolved;+weiss_arrested'],
+acc:['gage','Söylediğini kayda geçiriyorum, Alder. Götürün.',null,'+weiss_resolved;+weiss_arrested']});
+dl('finch_h',{a:['finch',S=>S.dead.finch?'':S.f.triage_finch?'Doktor beni kurtardı... Beni seçtiğini duydum, Alder. Teşekkürler.':S.f.triage_both?'Hemşire Whitby bütün gece başımdaydı. Yaşıyorum.':'Soğuk... Annem...',null]});
+dl('doyle_h',{a:['doyle',S=>S.dead.doyle?'':S.f.triage_both?'Seni mahzene kadar takip eden bir borç büyüdü, Alder.':S.f.triage_other?'Beni seçtin... Finch’in gözleri aklıma geliyor.':'Hâlâ ayaktayım. İnatçıyım.',null]});
+dl('hale_h',{a:['hale',S=>S.dead.hale?'':'Yaralıyı bırakmamak gerektiğini bir çocuk bana öğretti... çok önce.',null]});
+dl('pem_h',{
+a:['pem','Hat Armentières’e kayıyor. Almanlar sessiz; Noel yaklaşıyor. Kayıplar... çok. Alder, sen iyi bir askersin.',null,'+ch3_end']});
+/* ================= BÖLÜM 4: NOEL ================= */
+dl('pem_x',{
+a:['pem','Alder. Siper hattının ötesinden şarkı sesleri geliyor. Alman fenerleri yanıyor. Hile olabilir. Kimse siperden çıkmayacak. Şafakta ateş emri gelebilir. Anlaşıldı mı?',[
+ ['Anlaşıldı Teğmenim.','+xmas_obey;t.pem+1','c'],
+ ['Teğmenim, belki bu gece ateş etmemek daha insanca olur.','+xmas_plea;t.pem-1;t.hale+1','c'],
+ ['Emri sorgulamam ama kimse zarar görmesin.','+xmas_neutral','c']]],
+c:['pem','Nöbete dönün. Tanrı bizimle.',null,'+pem_xmas']});
+dl('hale_x',{
+a:['hale',S=>S.t.hale>=2?'Alder, bu gece sana söylemem gereken bir şey var. Boer Savaşı’nda bir gece, yaralı bir arkadaşımı bırakıp geri çekildim. O sabah öldü... Bu yüzden genç adamlara sahip çıkıyorum.':'Soğuk bir gece, Alder. Ağzını açma, gözünü aç.',S=>S.t.hale>=2?'b':'z'],
+b:['hale','Neden sana anlattım bilmiyorum.',[
+ ['Seni suçlamıyorum, Çavuş. Hepimiz hata yapıyoruz.','t.hale+2;+hale_forgiven;log=Hale’in sırrına anlayışla karşılık verdin','c'],
+ ['Bu seni hâlâ yaralıyor.','t.hale+1;+hale_secret','c'],
+ ['Bir asker emri yerine getirir. Kimseyi geride bırakmaz ama emre de uyar.','t.hale-1;+hale_cold','c']]],
+c:['hale','Karanlıkta fenerler yanıyor. Çıkıp bakalım mı? Ya da burada kalalım?',[
+ ['Çıkalım. Ateşkes gerçekse tanık olalım.','+truce_open;log=Çavuş Hale ile siperden çıktın','e'],
+ ['Kalalım. Emir emirdir.','+stay;t.hale-0','e2']]],
+e:['_','Siperden çıkıyorsunuz. Karanlıkta Alman fenerlerinin ışığı kar tanelerine vuruyor.',null,'+hale_x_done'],
+e2:['_','Siperde kalıyorsunuz; şarkılar bir türlü kesilmiyor.',null,'+hale_x_done'],
+z:['_','Hale sana bakmıyor bile. Omuzları çökmüş.',null,'+hale_x_done;+hale_closed']});
+dl('karl_a',{
+a:['karl','Frohe Weihnachten, Tommy! Ben Karl. Zorunlu askerim, Stuttgart’tan. Ateş etmek istemiyorum.','b'],
+b:['karl','Bu gece... kimse ölmesin istiyorum. Sen kimsin?',[
+ ['Frohe Weihnachten, Karl. Ben Thomas. Bu gece ateş yok.','+karl_friend;rep+1;log=Karl ile tokalaştın','c'],
+ ['Dikkatli ol, Karl. Bu bir tuzak olabilir.','+karl_wary','c'],
+ ['Weiss, buraya gel. Çevirir misin?','+weiss_translated;t.weiss+1;+karl_deep','c',S=>G.alive('weiss')&&!S.f.weiss_arrested]]],
+c:['karl','Cenaze... Ölülerimizi gömemedik. Birlikte gömelim mi? Ve çikolata, sigara değiştirelim.',[
+ ['Birlikte gömelim.','+burial;t.hale+1;rep+1;log=Alman ve İngiliz ölüleri birlikte gömdün','d'],
+ ['Hediyeleşelim, ama gömme işini siz yapın.','+gift','d'],
+ ['Emir yok. Geri dönüyorum.','+leave_karl','d']]],
+d:['_','Karanlıkta bir tuhaf an: iki düşman aynı fenerin ışığında omuz omuza duruyor.',null,'+met_karl']});
+dl('weiss_x',{a:['weiss',S=>S.f.weiss_arrested?'':S.f.weiss_free?'Beni aklayan sendin. Bu geceyi unutmayacağım.':'Siperde Almanca şarkı duyunca babamı hatırladım.',null]});
+dl('doyle_x',{a:['doyle',S=>S.dead.doyle?'':S.f.aided_marie?'Marie’in mektubu geldi: kızı iyi. Seni söylemeyi unutmadı.':'Noel’de herkes ekmek ister, biz bile.',null,S=>S.dead.doyle?'':S.f.aided_marie?'+marie_letter':'']});
+dl('finch_x',{a:['finch',S=>S.dead.finch?'':S.f.finch_comforted?'Sana mektup yazdım, Alder. Sen oku diye.':'Ellerim hâlâ titriyor ama buradayım.',null]});
+dl('letter_look',{
+a:['_','Finch’in katlanmış mektubu hâlâ cebinde. Eddie’nin son sözleri...',[
+ ['Mektubu annesine kendim götüreceğim.','pk.finch_letter;t.hale+1;log=Finch’in mektubunu annesine götürme sözünü tuttun','end'],
+ ['Onunla birlikte gömüyorum.','pb.finch_letter;log=Finch’in mektubunu gömdün','end']]],
+end:['_','Mektubu ağır bir sessizlikle katlıyorsun.',null,'+letter_done']});
+dl('tree_look',{a:['_','Siperin kenarında cılız bir noel ağacı: dallarında mum yerine boş mühimmat fişekleri asılı.',null]});
+dl('pem_dawn',{
+a:['pem','Şafak söktü. Emir yukarıdan: Alman siperine ateş. Hazır... Alder, nişan al!',[
+ ['Emri yerine getir: ateş et.','+fired;rep-1;t.hale-1;t.weiss-1;log=Şafakta Alman siperine ateş ettin','e'],
+ ['Havaya ateş et; kimseyi vurma.','+fired_air;t.hale+1;log=Havaya ateş edip kimseyi vurmadın','e'],
+ ['Silahı indir. Ateş etmeyi reddediyorum.','+refused;t.pem-2;t.hale+2;log=Ateş emrini reddettin','e'],
+ ['(Karl’a bağır) “Siper! Ateş geliyor!”','+warned_karl;t.pem-3;rep+1;log=Karl’ı ateşten önce uyardın','e',S=>S.f.karl_friend]]],
+e:['_','Silahlar gürlüyor, ya da susuyor. Savaş devam edecek ama sen artık aynı insan değilsin.',null,'+ch4_end']});
+/* ------ Boş sohbetler ------ */
+const IDLE={
+hale:[S=>S.f.investigating&&!(S.f.clue1&&S.f.clue2)&&!S.f.incident_done?'Sandıklara ve çit tarafına bak, Alder.':'Silahlarını temizle. Yarın uzun bir gün.',S=>'Gözünü açık tut. Almanlar sessiz yürür.',S=>'Yaralılara bak. Burada her gün iyi adamlar önce ölüyor.',S=>'Soğuk... ama bu gece garip bir sessizlik var.'],
+finch:[S=>S.f.defended_finch?'Beni savunduğunu unutmayacağım, Alder.':S.f.finch_punished?'Ücretim kesildi... annem anlamayacak.':'Mektup yazıyorum... Annem merak eder.',S=>S.f.finch_comforted?'Yanımda olman büyük şey.':'Elim hâlâ titriyor.',S=>'Bir daha nefes alırsam şanslıyım.',S=>'Yarın ne olacak?'],
+doyle:[S=>'Cebinde sigara olsaydı seni sevecektim, Alder.',S=>S.f.reported_doyle?'Mesafe, Alder. Mesafe.':'Yolda dikkat et.',S=>'Hâlâ ayaktayım.',S=>'Noel’de herkes ekmek ister.'],
+weiss:[S=>S.f.weiss_trust?'Teşekkür ederim. Herkes böyle olsa...':'Gözümün ucuyla izlendiğimi biliyorum.',S=>S.f.order_weiss?'Haritayı okuduğuma sevindim.':'Almanlar çok sessiz...',S=>'Mektubumu yazamadım.',S=>'Şarkıları tanıyorum. Bu garip.'],
+pem:[S=>'Hazırlanın. Sabah erken yola çıkıyoruz.',S=>'Köprü hâlâ elimizde mi?',S=>'Kayıplar çok. Yine de devam.',S=>'Emir emirdir.'],
+bell:[S=>'Sayım. Sayım. Sayım.'],marie:[S=>'Lütfen bize yardım edin.'],ward:[S=>'Geri dönmeyi unutma, evlat.'],
+clara:[S=>'Yorgunum ama ayaktayım.'],gage:[S=>'Hâlâ sizi izliyorum.'],karl:[S=>'Frohe Weihnachten!']};
+function idleId(id,S){const arr=IDLE[id]||[];const f=arr[Math.min(S.ch-1,arr.length-1)]||(()=>'...');const k='idle_'+id+'_'+S.ch;if(!D[k]){D[k]={a:[id,S=>{const a=IDLE[id]||[];return(a[Math.min(S.ch-1,a.length-1)]||(()=>'...'))(S)},null]}}return k}
+/* ================= BÖLÜMLER, GÖREVLER, VARLIKLAR ================= */
+const wounded=S=>S.f.doyle_wounded||S.f.hale_wounded;
+const CH={
+1:{title:'Bölüm 1 — Çağrı',date:'Ağustos 1914 · Aldershot Kışlası, İngiltere',loc:'camp',weather:'rain',
+ intro:'Saraybosna’daki suikastın üzerinden altı hafta geçti. Almanya Belçika’ya girdi; İngiltere savaşa girdi. Yedek asker Thomas Alder, elinde tek bir bavulla kışlanın kapısından giriyor. Herkes “Noel’e kadar biter” diyor.',
+ obj:[{t:'Çavuş Hale’e rapor ver',d:S=>S.f.met_hale},{t:'Manga arkadaşlarınla tanış (Finch, Doyle, Weiss)',d:S=>S.f.met_squad,s:S=>S.f.met_hale},{t:'Kayıp erzak olayını çöz',d:S=>S.f.incident_done,s:S=>S.f.met_squad},{t:'Erzak sandıklarını incele',d:S=>S.f.clue1,s:S=>S.f.investigating&&!S.f.incident_done},{t:'Çit boşluğunu incele',d:S=>S.f.clue2,s:S=>S.f.investigating&&!S.f.incident_done},{t:'Çavuş Hale’e raporunu ver',d:S=>S.f.incident_done,s:S=>S.f.clue1&&S.f.clue2&&!S.f.incident_done},{t:'Teğmen Pemberton’dan emirleri al',d:S=>S.f.ch1_end,s:S=>S.f.incident_done}],
+ end:'ch1_end',
+ ents:[
+ {id:'hale',k:'npc',x:-8,z:5,m:'nco',talk:S=>!S.f.met_hale?'hale_a':(S.f.met_squad&&!S.f.incident_started)?'hale_inc':(S.f.investigating&&S.f.clue1&&S.f.clue2&&!S.f.incident_done)?'hale_rep':'#'},
+ {id:'finch',k:'npc',x:-2,z:-4,m:'soldier',talk:S=>!S.f.met_finch?'finch_a':'#'},
+ {id:'doyle',k:'npc',x:10,z:-3,m:'soldier',talk:S=>!S.f.met_doyle?'doyle_a':'#'},
+ {id:'weiss',k:'npc',x:-16,z:9,m:'soldier',talk:S=>!S.f.met_weiss?'weiss_a':'#'},
+ {id:'bell',k:'npc',x:-5,z:6,m:'nco',show:S=>S.f.incident_started&&!S.f.incident_done,talk:S=>'bell_a'},
+ {id:'pem',k:'npc',x:2,z:16,m:'officer',show:S=>S.f.incident_done,talk:S=>S.f.ch1_end?'#':'pem_o'},
+ {id:'crates',k:'prop',name:'Levazım sandıkları',x:8,z:-6,talk:S=>'crates_look'},
+ {id:'fence',k:'prop',name:'Çit boşluğu',x:21,z:13,talk:S=>'fence_look'},
+ {id:'board',k:'prop',name:'Çağrı afişi',x:-4,z:12,talk:S=>'board_look'}]},
+2:{title:'Bölüm 2 — Hat',date:'Eylül 1914 · Aisne Vadisi, Fransa',loc:'village',weather:'fog',
+ intro:'Mons’tan geri çekilme, Marne’da Almanların durdurulması... Şimdi Aisne’de çamurlu bir köyde, siperlerin ilk biçimlendiği günlerdesiniz. Her gün bir karar; her karar birilerinin hayatı.',
+ obj:[{t:'Teğmen Pemberton’dan emir al',d:S=>S.f.got_order},{t:'Haberi Yüzbaşı Ward’a ulaştır (tarlada topçu ateşi var!)',d:S=>S.f.msg_delivered,s:S=>S.f.got_order},{t:'Kayıp Finch’i ara (ahır)',d:S=>S.f.finch_found,s:S=>S.f.finch_missing},{t:'Mahzendeki sesi araştır',d:S=>S.f.cellar_done,s:S=>S.f.got_order},{t:'Pemberton’a rapor ver',d:S=>S.f.ch2_end,s:S=>S.f.msg_delivered&&S.f.finch_found&&S.f.cellar_done}],
+ end:'ch2_end',artillery:S=>S.f.has_message&&!S.f.msg_delivered,
+ ents:[
+ {id:'pem',k:'npc',x:0,z:14,m:'officer',talk:S=>!S.f.got_order?'pem_order':(S.f.msg_delivered&&S.f.finch_found&&S.f.cellar_done&&!S.f.ch2_end)?'pem_rep':'#'},
+ {id:'hale',k:'npc',x:-5,z:12,m:'nco',talk:S=>'hale_d1'},
+ {id:'doyle',k:'npc',x:6,z:10,m:'soldier',talk:S=>S.f.reported_doyle||S.f.doyle_punished?'doyle_d1':(S.f.doyle_promise&&!S.f.doyle_confessed&&!S.pb.doyle_confess)?'doyle_d3':(S.f.doyle_owes?'doyle_d2':'doyle_d0')},
+ {id:'weiss',k:'npc',x:-9,z:14,m:'soldier',talk:S=>'weiss_d1'},
+ {id:'ward',k:'npc',x:0,z:-32,m:'officer',talk:S=>S.f.has_message&&!S.f.msg_delivered?'ward_a':'#'},
+ {id:'finch',k:'npc',x:-18,z:-6,m:'soldier',show:S=>S.f.finch_missing&&!S.f.finch_found,talk:S=>'finch_barn'},
+ {id:'marie',k:'npc',x:12,z:-3,m:'civilian',talk:S=>!S.f.cellar_done?'marie_a':'#'}]},
+3:{title:'Bölüm 3 — Hastane',date:'Kasım 1914 · Ypres yakınları, Belçika',loc:'hospital',weather:'rain',
+ intro:'Birinci Ypres Muharebesi dört haftadır sürüyor. Alay yarı yarıya eridi. Bir ahır sahra hastanesine dönüştürüldü; ranzalar, lambalar, kan kokusu. Burada kahramanlık yok, sadece kararlar var.',
+ obj:[{t:'Hemşire Whitby ile konuş',d:S=>S.f.met_clara},{t:'Malzemeleri bul: morfin, sargı, temiz su',d:S=>S.f.sup_m&&S.f.sup_b&&S.f.sup_w,s:S=>S.f.met_clara},{t:'Sedye kararını ver (Hemşire Whitby)',d:S=>S.f.triage_done,s:S=>S.f.met_clara},{t:'Er Weiss’in tutuklanmasını çöz (Çavuş Gage)',d:S=>S.f.weiss_resolved},{t:'Teğmen Pemberton ile konuş',d:S=>S.f.ch3_end,s:S=>S.f.triage_done&&S.f.weiss_resolved}],
+ end:'ch3_end',
+ ents:[
+ {id:'clara',k:'npc',x:0,z:2,m:'nurse',talk:S=>!S.f.met_clara?'clara_a':(!S.f.triage_done&&S.f.sup_m&&S.f.sup_b&&S.f.sup_w)?'clara_t':'#'},
+ {id:'gage',k:'npc',x:-3,z:-8,m:'nco',show:S=>!S.f.weiss_resolved,talk:S=>'gage_a'},
+ {id:'weiss',k:'npc',x:-5,z:-8,m:'soldier',show:S=>!S.f.weiss_arrested,talk:S=>'weiss_d1'},
+ {id:'finch',k:'npc',x:-9,z:-4,m:'soldier',show:S=>!S.dead.finch,talk:S=>'finch_h'},
+ {id:'doyle',k:'npc',x:9,z:-4,m:'soldier',show:S=>S.f.triageB!='hale'&&!S.dead.doyle,talk:S=>'doyle_h'},
+ {id:'hale',k:'npc',x:9,z:-4,m:'nco',show:S=>S.f.triageB=='hale'&&!S.dead.hale,talk:S=>'hale_h'},
+ {id:'pem',k:'npc',x:14,z:6,m:'officer',talk:S=>(S.f.triage_done&&S.f.weiss_resolved&&!S.f.ch3_end)?'pem_h':'#'},
+ {id:'sup_m',k:'prop',name:'Morfin dolabı',x:12,z:8,talk:S=>S.f.sup_m?'#':'sup_m'},
+ {id:'sup_b',k:'prop',name:'Sargı sandığı',x:-12,z:8,talk:S=>S.f.sup_b?'#':'sup_b'},
+ {id:'sup_w',k:'prop',name:'Su varili',x:0,z:12,talk:S=>S.f.sup_w?'#':'sup_w'}]},
+4:{title:'Bölüm 4 — Noel',date:'24 Aralık 1914 · Armentières yakınları',loc:'noman',weather:'snow',
+ intro:'Yağmurlar dondu, çamur taş kesti. Siperlerin ötesinden Almanca bir şarkı geliyor: “Stille Nacht”. Karşı hatta fenerler yanıyor. Tarih kitaplarına “Noel Ateşkesi” diye geçecek bu geceyi, şimdilik yalnızca yaşıyorsun.',
+ obj:[{t:'Teğmen Pemberton’un emrini dinle',d:S=>S.f.pem_xmas},{t:'Çavuş Hale ile konuş',d:S=>S.f.hale_x_done,s:S=>S.f.pem_xmas},{t:'Siperden çık ve Karl ile karşılaş',d:S=>S.f.met_karl,s:S=>S.f.truce_open},{t:'Siperlerdeki arkadaşlarınla konuş',d:S=>S.f.met_karl||S.f.stay,s:S=>S.f.hale_x_done},{t:'Finch’in mektubu için karar ver',d:S=>S.f.letter_done,s:S=>S.pr.finch_letter&&S.dead.finch},{t:'Şafak: Pemberton’un emrine cevap ver',d:S=>S.f.ch4_end,s:S=>S.f.hale_x_done&&(S.f.met_karl||S.f.stay)}],
+ end:'ch4_end',
+ ents:[
+ {id:'pem',k:'npc',x:-4,z:11,m:'officer',talk:S=>!S.f.pem_xmas?'pem_x':(S.f.hale_x_done&&(S.f.met_karl||S.f.stay)&&!S.f.ch4_end)?'pem_dawn':'#'},
+ {id:'hale',k:'npc',x:2,z:11,m:'nco',show:S=>!S.dead.hale,talk:S=>!S.f.hale_x_done?'hale_x':'#'},
+ {id:'doyle',k:'npc',x:8,z:11,m:'soldier',show:S=>!S.dead.doyle,talk:S=>'doyle_x'},
+ {id:'weiss',k:'npc',x:-9,z:11,m:'soldier',show:S=>!S.dead.weiss&&!S.f.weiss_arrested,talk:S=>'weiss_x'},
+ {id:'finch',k:'npc',x:-14,z:11,m:'soldier',show:S=>!S.dead.finch,talk:S=>'finch_x'},
+ {id:'karl',k:'npc',x:0,z:-2,m:'german',show:S=>S.f.truce_open,talk:S=>!S.f.met_karl?'karl_a':'#'},
+ {id:'letter',k:'prop',name:'Finch’in mektubu',x:12,z:11,show:S=>S.pr.finch_letter&&S.dead.finch&&!S.f.letter_done,talk:S=>'letter_look'},
+ {id:'tree',k:'prop',name:'Noel ağacı',x:-1,z:8,talk:S=>'tree_look'}]}};
+/* ================= FİNALLER ================= */
+function fates(S){const L=[],a=id=>!S.dead[id];
+ L.push(a('finch')?(S.pk.finch_letter?'Eddie Finch savaştan döndü; annesine mektupları kendi elinle verdin.':'Eddie Finch hayatta. Mektupları hâlâ yazıyor.'):(S.pk.finch_letter?'Eddie Finch savaşta öldü; mektubunu annesine sen ulaştırdın.':S.pb.finch_letter?'Eddie Finch savaşta öldü. Mektubu onunla gömüldü.':'Eddie Finch savaşta öldü.'));
+ L.push(a('doyle')?(S.f.aided_marie||S.f.covered_doyle?'Jack Doyle’un sırrı bir merhametti; savaştan sonra Marie’nin ailesine bir mektup yazdı.':'Jack Doyle hayatta, hâlâ alaycı.'):'Jack Doyle öldü; sırrını da mezara götürdü.');
+ L.push(S.f.weiss_arrested?'Samuel Weiss tutuklu kaldı; sicili ancak savaştan sonra temizlendi.':a('weiss')?'Samuel Weiss güvenle terzi dükkânına döndü.':'Samuel Weiss öldü.');
+ L.push(a('hale')?(S.f.hale_forgiven?'Çavuş Hale, geçmişin yükünü bir parça olsun bıraktı.':'Çavuş Hale yoluna devam etti.'):'Çavuş Hale öldü.');
+ return L}
+const sq=S=>['hale','finch','doyle','weiss'];
+function metrics(S){const al=sq().filter(i=>!S.dead[i]&&!(i=='weiss'&&S.f.weiss_arrested)).length,dead=sq().filter(i=>S.dead[i]).length,avg=sq().reduce((s,i)=>s+(S.t[i]||0),0)/4;return{al,dead,avg}}
+const ENDS=[
+{id:'secret',title:'Sessiz Gece',hidden:true,c:S=>{const m=metrics(S);return(S.f.refused||S.f.fired_air)&&S.f.karl_deep&&S.f.burial&&S.f.hale_forgiven&&m.dead==0&&!S.f.weiss_arrested&&m.avg>=2.5},t:['Şafağın ilk ışığında hiçbir silah ateşlenmedi. Siperler sessizliğe gömüldü; bu sessizlik tarihte bir dipnota dönüştü.','Sen, Hale, Doyle, Finch ve Weiss savaştan sağ çıktınız. Karl’dan yıllarca mektup aldın. “Frohe Weihnachten” her yıl aynı sayfada duran bir cümle oldu.']},
+{id:'brotherhood',title:'Kardeşlik',c:S=>{const m=metrics(S);return(S.f.refused||S.f.fired_air)&&m.al>=3&&m.avg>=1.5},t:['Şafakta silahını indirdin ya da havaya ateş ettin. Manga arkadaşların seni gördü; kimse seni yalnız bırakmadı.','Savaş devam etti ama sen yalnız değildin. Yıllar sonra bir manga buluşmasında kadehler hâlâ aynı şarkıyla kalkıyordu.']},
+{id:'court',title:'Vicdan Mahkemesi',c:S=>S.f.refused,t:['Ateş etmeyi reddettin. Askerî mahkemede kararın ağırlığı hissedildi.','Duruşmada tanıklar konuştu; sonunda ceza, hizmet içi bir uyarı ile bitti, ama sicil bir daha temizlenmedi. Hata mı yaptın, yoksa insan mıydın? Bu soruyu hep taşıyacaksın.']},
+{id:'mercy',title:'Gizli Merhamet',c:S=>S.f.aided_marie&&S.f.doyle_secret_known&&!S.f.fired&&metrics(S).al>=2,t:['Mahzendeki sivillere yaptığın yardım bir gün karşılık buldu: Marie’den gelen mektup ve küçük bir kızın çizimi.','Savaş zamanı belki yalnız bir yardım küçük görünür; bazen en büyük zaferler böyle gelir.']},
+{id:'peace',title:'Barış Yaptım',c:S=>S.f.karl_friend&&(S.f.burial||S.f.gift)&&metrics(S).al>=2,t:['Noel gecesi Karl ile tokalaştın. Kısa sürdü; sabah sonra yeniden savaştınız. Ama o gece bir şeyleri kalıcı değiştirdi.','Savaştan sonra Karl’ın adresini buldun. Bazı sessiz barışlar, kitapların yazamayacağı kadar büyüktür.']},
+{id:'price',title:'Ağır Bedel',c:S=>S.f.fired&&(metrics(S).dead>=2||S.f.weiss_arrested||S.f.weiss_accused),t:['Emre uydun, ateş ettin. O gün bir Alman siperinde sessizlik değil çığlık hâkimdi.','Dostların, kararların; hepsi tek bir tetiğin ağırlığıyla sarsıldı. Savaştan sağ çıktın, ama uykunun kendisi bir cephe oldu.']},
+{id:'alone',title:'Yalnız Asker',c:S=>{const m=metrics(S);return m.avg<=-0.5||m.al<=1},t:['Kararların seni yalnızlığa götürdü. Manga arkadaşların ya öldü ya da senden uzaklaştı.','Siperde hayatta kaldın ama yanında konuşacak kimse kalmadı. Bazen sağ kalmak en ağır cezadır.']},
+{id:'ordinary',title:'Sıradan Bir Asker',c:S=>true,t:['Ne kahraman oldun, ne hain. Savaşı sağ atlattın; kararların bazen doğru, bazen yanlıştı.','Yıllar sonra torunlarına bu Noel’i anlattığında yalnızca “soğuktu” diyeceksin.']}];
+G.endings={list:ENDS,pick:S=>ENDS.find(e=>e.c(S)),fates};
+/* ================= HİKÂYE API ================= */
+G.story={C,D,CH,
+ ents:S=>CH[S.ch].ents.filter(e=>!e.show||e.show(S)),
+ name:id=>(C[id]||{}).n,
+ talkId:(e,S)=>{const id=e.talk(S);return id=='#'?idleId(e.id,S):id},
+ update(S){if(S.f.met_finch&&S.f.met_doyle&&S.f.met_weiss)S.f.met_squad=1;
+  if(S.ch==3&&!S.f.triageB)S.f.triageB=S.f.doyle_wounded?'doyle':S.f.hale_wounded?'hale':'doyle';
+  if(S.f.wounded&&S.hp<40)S.hp=40},
+ objectives(S){return CH[S.ch].obj.filter(o=>!o.s||o.s(S)).map(o=>({t:o.t,d:!!o.d(S)}))},
+ chapterEnded:S=>!!S.f[CH[S.ch].end],
+ begin(S){const c=CH[S.ch];S.loc=c.loc;G.story.update(S);
+  if(S.ch==2&&S.f.finch_missing===undefined&&0)S.f.finch_missing=1}};
+G.dlg={
+ open(id){this.nodes=D[id];this.id=id;return this.go(Object.keys(this.nodes)[0])},
+ go(k){const n=this.nodes[k],S=G.S();this.key=k;G.fx(n[3]);this.speaker=n[0];this.text=typeof n[1]=='function'?n[1](S):n[1];
+  const nx=typeof n[2]=='function'?n[2](S):n[2];this.choices=Array.isArray(nx)?nx.filter(c=>!c[3]||c[3](S)).map(c=>({t:typeof c[0]=='function'?c[0](S):c[0],fx:c[1],go:c[2]})):null;this.next=typeof nx=='string'?nx:null;return this},
+ advance(){return this.next?this.go(this.next):null},
+ choose(i){const c=this.choices[i];G.fx(c.fx);return c.go?this.go(c.go):null}};
+G.story.after=(id)=>{const S=G.S();S.seen[id]=(S.seen[id]||0)+1;
+ if(id=='hale_rep'||id=='gage_a'){}
+ if(id=='pem_rep'&&S.f.skirmish){}
+ G.story.update(S)};
+})(window.G=window.G||{});
+
+</script>
+<script>/* src/assets.js */
+/* 1914 — MODEL SİSTEMİ
+   • Yer tutucu modeller kodla üretilir (kutu/silindir).
+   • Kendi GLB/glTF modelini "Ayarlar > Model İçe Aktar" ile her rolün yerine koyabilirsin.
+   • Animasyon adları: idle/stand, walk/run, talk/speak (büyük-küçük harf önemsiz). Yoksa yer tutucu hareket kullanılır. */
+(function(G){
+const A=G.A={custom:{},log:[],ROLES:{player:'Oyuncu (Alder)',soldier:'İngiliz asker',nco:'Çavuş',officer:'Subay',nurse:'Hemşire',civilian:'Sivil',german:'Alman asker',hut:'Baraka',house:'Ev / çiftlik',tent:'Çadır',crate:'Sandık',tree:'Ağaç',lamp:'Lamba direği'}};
+const mats={},mat=c=>mats[c]||(mats[c]=new THREE.MeshLambertMaterial({color:c}));A.mat=mat;
+const bx=(w,h,d,c,x,y,z)=>{const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat(c));m.position.set(x,y,z);m.castShadow=true;return m};
+A.bx=bx;
+const STY={soldier:{u:0x6b6a3a,h:0x5a5a30,s:0xe0b890},nco:{u:0x5e5d34,h:0x4a4a2a,s:0xd6a880,st:1},officer:{u:0x6e6440,h:0x3a3a28,s:0xe3bc98,belt:1},nurse:{u:0xe8e4da,h:0xcfc8b8,s:0xe8c4a0,nurse:1},civilian:{u:0x6a4a3a,h:0x3a2a22,s:0xdcb08a,civ:1},german:{u:0x56606a,h:0x484c52,s:0xe0b890,pick:1},player:{u:0x6b6a3a,h:0x5a5a30,s:0xe0b890}};
+function placeholder(kind){const s=STY[kind]||STY.soldier,g=new THREE.Group();
+ const limb=(w,h,d,c,x,y)=>{const p=new THREE.Group();p.position.set(x,y,0);p.add(bx(w,h,d,c,0,-h/2,0));g.add(p);return p};
+ const legL=limb(.22,.82,.26,0x3a3a30,-.16,.86),legR=limb(.22,.82,.26,0x3a3a30,.16,.86);
+ const body=bx(.66,.74,.36,s.u,0,1.25,0);g.add(body);
+ if(s.belt)g.add(bx(.68,.1,.38,0x3a2a1a,0,1.0,0));
+ if(s.nurse)g.add(bx(.2,.2,.02,0xb02020,0,1.35,.19));
+ const armL=limb(.17,.7,.2,s.u,-.42,1.58),armR=limb(.17,.7,.2,s.u,.42,1.58);
+ const head=bx(.3,.32,.3,s.s,0,1.82,0);g.add(head);
+ g.add(bx(.34,.1,.34,s.h,0,2.0,0)); if(s.pick){g.add(bx(.06,.18,.06,0xb0a050,0,2.12,0))} else if(s.nurse){g.add(bx(.36,.12,.36,0xffffff,0,2.0,0))} else g.add(bx(.4,.04,.4,s.h,0,1.96,.08));
+ if(!s.nurse&&!s.civ)g.add(bx(.08,.5,.06,0x2a2218,.3,1.35,.2)); // tüfek/kayış
+ g.userData={parts:{legL,legR,armL,armR,body},kind};return g}
+function pick(role,kind){return A.custom[role]||A.custom[kind]}
+A.character=kind=>{const c=A.custom[kind==='player'?'player':kind]||(kind==='nco'||kind==='officer'?A.custom[kind]:null)||(kind!=='player'&&kind!=='nurse'&&kind!=='civilian'&&kind!=='german'?A.custom.soldier:null);
+ if(!c)return placeholder(kind);
+ const inst=(THREE.SkeletonUtils&&THREE.SkeletonUtils.clone)?THREE.SkeletonUtils.clone(c.scene):c.scene.clone(true),g=new THREE.Group();inst.scale.setScalar(c.scale);inst.position.y=c.y;inst.rotation.y=c.rot;g.add(inst);
+ g.userData={custom:true,kind};
+ if(c.clips&&c.clips.length){const mx=new THREE.AnimationMixer(inst),f=re=>{const k=c.clips.find(x=>re.test(x.name));return k&&mx.clipAction(k)};
+  g.userData.mixer=mx;g.userData.act={idle:f(/idle|stand/i),walk:f(/walk|run/i),talk:f(/talk|speak/i)};if(g.userData.act.idle)g.userData.act.idle.play();g.userData.cur='idle'}
+ return g};
+A.animate=(g,dt,t,moving,talking)=>{const u=g.userData;if(!u)return;
+ if(u.mixer){const want=talking&&u.act.talk?'talk':moving&&u.act.walk?'walk':'idle',a=u.act;if(want!==u.cur&&a[want]){const o=a[u.cur];if(o)o.fadeOut(.2);a[want].reset().fadeIn(.2).play();u.cur=want}u.mixer.update(dt);return}
+ const p=u.parts;if(!p)return;const sw=moving?Math.sin(t*9)*.7:0;
+ p.legL.rotation.x=sw;p.legR.rotation.x=-sw;p.armL.rotation.x=-sw*.8;p.armR.rotation.x=sw*.8;
+ if(talking){p.armR.rotation.x=-.7+Math.sin(t*6)*.25}
+ p.body.position.y=1.25+(moving?Math.abs(Math.sin(t*9))*.05:Math.sin(t*1.7)*.012)};
+/* İçe aktarma: GLB/glTF. Başka biçimler için açık hata mesajları. */
+A.importFile=async(role,file,o)=>{o=o||{};const name=file.name,ext=(name.split('.').pop()||'').toLowerCase(),out=[];
+ if(!A.ROLES[role])throw new Error('Bilinmeyen rol: '+role);
+ if(['obj','fbx','dae','blend','p3d','stl','3ds'].includes(ext))throw new Error('.'+ext+' biçimi doğrudan desteklenmiyor. Modeli Blender’da açıp File > Export > glTF 2.0 (.glb) ile dışa aktar (Animasyonlar işaretli olsun).');
+ if(!['glb','gltf'].includes(ext))throw new Error('Desteklenen biçimler: .glb ve .gltf (tek dosyalı). Gelen: .'+ext);
+ if(!THREE.GLTFLoader)throw new Error('GLTFLoader yüklenemedi (internet bağlantısı / CDN). Sayfayı yenile veya yerel kopya kullan.');
+ const buf=await file.arrayBuffer();
+ const gltf=await new Promise((ok,no)=>new THREE.GLTFLoader().parse(buf,'',ok,e=>no(new Error('Dosya okunamadı: '+(e&&e.message||e)+(ext=='gltf'?' (.gltf dosyası harici .bin/doku istiyorsa .glb olarak dışa aktar)':'')))));
+ let meshes=0;gltf.scene.traverse(n=>{if(n.isMesh){meshes++;n.castShadow=true}});
+ if(!meshes)throw new Error('Dosyada hiç mesh yok (boş sahne).');
+ const box=new THREE.Box3().setFromObject(gltf.scene),size=new THREE.Vector3();box.getSize(size);
+ const target={player:1.78,soldier:1.78,nco:1.8,officer:1.78,nurse:1.65,civilian:1.65,german:1.78,hut:3.2,house:5,tent:2.6,crate:1,tree:6,lamp:3.8}[role];
+ const auto=size.y>0?target/size.y:1,scale=o.scale||auto;
+ A.custom[role]={scene:gltf.scene,clips:gltf.animations||[],scale,y:(o.y||0)-box.min.y*scale,rot:(o.rot||0)*Math.PI/180,file:name};
+ out.push('Yüklendi: '+name+' → '+A.ROLES[role]+' (boy ≈ '+(size.y*scale).toFixed(2)+' m, ölçek '+scale.toFixed(3)+')');
+ if(['player','soldier','nco','officer','nurse','civilian','german'].includes(role)){const n=(gltf.animations||[]).map(x=>x.name);
+  out.push(n.length?'Animasyonlar: '+n.join(', '):'UYARI: Animasyon yok; model sabit duracak.');
+  if(n.length&&!n.some(x=>/walk|run/i.test(x)))out.push('UYARI: “walk/run” adlı animasyon bulunamadı; yürürken idle çalışır.')}
+ if(size.y>50||size.y<.05)out.push('UYARI: Model boyu alışılmadık ('+size.y.toFixed(2)+'). Ölçeği elle gir.');
+ A.log=out;return out};
+A.reset=role=>{delete A.custom[role]};
+})(window.G=window.G||{});
+
+</script>
+<script>/* src/audio.js */
+/* 1914 — SES: tamamı Web Audio ile üretilen yer tutucu sesler. Gerçek ses dosyası eklemek için README’ye bak (G.audio.loadFile). */
+(function(G){
+const Au=G.audio={vol:{m:.8,mu:.45,sf:.8},ctx:null,files:{},w:null};
+function ctx(){if(!Au.ctx){try{const C=window.AudioContext||window.webkitAudioContext;Au.ctx=new C();Au.mg=Au.ctx.createGain();Au.mg.connect(Au.ctx.destination)}catch(e){}}if(Au.ctx&&Au.ctx.state=='suspended')Au.ctx.resume();return Au.ctx}
+function nb(a,d){const n=a.sampleRate*d|0,b=a.createBuffer(1,n,a.sampleRate),c=b.getChannelData(0);for(let i=0;i<n;i++)c[i]=Math.random()*2-1;return b}
+function noise(d,v,f,ty,sf){const a=ctx();if(!a)return;const s=a.createBufferSource(),fl=a.createBiquadFilter(),g=a.createGain(),t=a.currentTime;s.buffer=nb(a,d);fl.type=ty||'lowpass';fl.frequency.value=f||800;g.gain.setValueAtTime(v*Au.vol.sf*Au.vol.m,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(fl);fl.connect(g);g.connect(a.destination);s.start(t)}
+function tone(f,d,ty,v,mus){const a=ctx();if(!a)return;const o=a.createOscillator(),g=a.createGain(),t=a.currentTime;o.type=ty||'sine';o.frequency.value=f;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime((v||.05)*(mus?Au.vol.mu:Au.vol.sf)*Au.vol.m,t+.05);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(a.destination);o.start(t);o.stop(t+d)}
+Au.sfx=k=>{if(Au.files[k]){Au.play(k);return}
+ if(k=='step')noise(.05,.06,500);else if(k=='boom'){noise(1.6,.7,220);tone(60,1.2,'sine',.5)}else if(k=='ui')tone(520,.06,'square',.03);else if(k=='page')noise(.12,.08,2400,'bandpass');else if(k=='hit'){noise(.3,.5,900);tone(90,.4,'sawtooth',.3)}else if(k=='warn')tone(300,.18,'square',.04)};
+Au.loadFile=async(k,url)=>{try{const a=ctx(),r=await fetch(url),b=await a.decodeAudioData(await r.arrayBuffer());Au.files[k]=b;return true}catch(e){return false}};
+Au.play=k=>{const a=ctx();if(!a||!Au.files[k])return;const s=a.createBufferSource(),g=a.createGain();s.buffer=Au.files[k];g.gain.value=Au.vol.sf*Au.vol.m;s.connect(g);g.connect(a.destination);s.start()};
+let amb=null,drone=[],wetG=null;
+Au.start=()=>{const a=ctx();if(!a||amb)return;
+ const mk=(f,v)=>{const s=a.createBufferSource(),fl=a.createBiquadFilter(),g=a.createGain();s.buffer=nb(a,3);s.loop=true;fl.type='lowpass';fl.frequency.value=f;g.gain.value=v;s.connect(fl);fl.connect(g);g.connect(a.destination);s.start();return g};
+ amb={wind:mk(260,.0),rain:mk(3400,.0)};
+ [110,164.8,196].forEach((f,i)=>{const o=a.createOscillator(),g=a.createGain();o.type='sawtooth';o.frequency.value=f/2*(1+i*.002);const fl=a.createBiquadFilter();fl.type='lowpass';fl.frequency.value=380;g.gain.value=0;o.connect(fl);fl.connect(g);g.connect(a.destination);o.start();drone.push(g)});
+ setInterval(Au.tick,400)};
+let tense=0;Au.setWeather=w=>{Au.w=w};Au.mood=m=>{tense=m=='tense'?1:m=='xmas'?-1:0};
+Au.tick=()=>{if(!amb)return;const t=Au.ctx.currentTime,m=Au.vol.m;amb.wind.gain.setTargetAtTime(.05*Au.vol.sf*m*(Au.w=='fog'?1.3:1),t,.5);amb.rain.gain.setTargetAtTime((Au.w=='rain'?.09:Au.w=='snow'?.015:0)*Au.vol.sf*m,t,.5);
+ drone.forEach((g,i)=>g.gain.setTargetAtTime((.03+.012*i+(tense>0?.02*i:0))*Au.vol.mu*m*(tense<0?.6:1),t,1.2));
+ if(Math.random()<.12&&(Au.w!='snow'))noise(2.4,.22,160);   // uzak top sesi
+ if(tense<0&&Math.random()<.2)tone([392,523,659,784][Math.random()*4|0],1.6,'sine',.04,true)};
+Au.apply=()=>{if(Au.mg)Au.mg.gain.value=1};
+})(window.G=window.G||{});
+
+</script>
+<script>/* src/world.js */
+/* 1914 — 3D DÜNYA: sahne kurulumu, oyuncu, NPC'ler, kamera, hava durumu, topçu ateşi.
+   Mantık düz sayılarla (P.x,P.z) yürür; Three.js yalnızca çizim içindir. */
+(function(G){
+const A=G.A,W=G.W={active:false,near:null,input:{x:0,y:0,run:0},menuOrbit:true,onHit:null,onInteract:null};
+let R,scene,cam,coll=[],ents=[],emap={},lamps=[],precip=null,pkind='',qual=2,focusE=null,tm=0,shake=0,sun,env,arty={on:false,tm:2.5,items:[]},bound=30,curLoc='';
+const P=W.P={x:0,z:12,r:Math.PI,mv:0,g:null},cs={yaw:0,pitch:.38,dist:6.5},cp={x:0,y:3,z:20,lx:0,ly:1.5,lz:0};
+const keys={},mat=A.mat,add=o=>(scene.add(o),o),rnd=(a,b)=>a+Math.random()*(b-a);
+W.init=cv=>{R=new THREE.WebGLRenderer({canvas:cv,antialias:true});R.shadowMap.enabled=true;R.shadowMap.type=THREE.PCFSoftShadowMap;
+ scene=new THREE.Scene();cam=new THREE.PerspectiveCamera(58,1,.1,160);W.resize();W.setQuality(qual);
+ addEventListener('resize',W.resize);
+ addEventListener('keydown',e=>{if(!W.active)return;keys[e.code]=1;if(e.code=='KeyE'||e.code=='Enter'||e.code=='Space')W.onInteract&&W.onInteract()});addEventListener('keyup',e=>keys[e.code]=0);
+ let drag=null;cv.addEventListener('pointerdown',e=>{drag={x:e.clientX,y:e.clientY,id:e.pointerId}});
+ addEventListener('pointermove',e=>{if(!drag||e.pointerId!=drag.id||!W.active)return;cs.yaw-=(e.clientX-drag.x)*.006;cs.pitch=Math.max(.08,Math.min(1.15,cs.pitch+(e.clientY-drag.y)*.004));drag.x=e.clientX;drag.y=e.clientY});
+ addEventListener('pointerup',()=>drag=null);
+ cv.addEventListener('wheel',e=>{cs.dist=Math.max(3,Math.min(11,cs.dist+e.deltaY*.005))},{passive:true})};
+W.resize=()=>{if(!R)return;const w=innerWidth,h=innerHeight;R.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix()};
+W.setQuality=q=>{qual=q;if(!R)return;R.setPixelRatio(q==0?1:q==1?Math.min(devicePixelRatio,1.25):Math.min(devicePixelRatio,2));R.shadowMap.enabled=q>0;if(sun)sun.castShadow=q>0};
+/* ---------- yapı taşları ---------- */
+function box(w,h,d,c,x,z,y,solid){const m=A.bx(w,h,d,c,x,(y||0)+h/2,z);m.receiveShadow=true;add(m);if(solid)coll.push({x0:x-w/2,x1:x+w/2,z0:z-d/2,z1:z+d/2});return m}
+function cyl(rt,rb,h,c,x,z,y,seg){const m=new THREE.Mesh(new THREE.CylinderGeometry(rt,rb,h,seg||8),mat(c));m.position.set(x,(y||0)+h/2,z);m.castShadow=true;add(m);return m}
+function cone(r,h,c,x,z,seg){const m=new THREE.Mesh(new THREE.ConeGeometry(r,h,seg||7),mat(c));m.position.set(x,h/2,z);m.castShadow=true;add(m);return m}
+function custom(role,x,z,rot){const c=A.custom[role];if(!c)return null;const inst=THREE.SkeletonUtils?THREE.SkeletonUtils.clone(c.scene):c.scene.clone(true),g=new THREE.Group();inst.scale.setScalar(c.scale);inst.position.y=c.y;inst.rotation.y=c.rot;g.add(inst);g.position.set(x,0,z);g.rotation.y=rot||0;add(g);return g}
+function gtex(base,spots){const c=document.createElement('canvas');c.width=c.height=256;const x=c.getContext('2d');x.fillStyle=base;x.fillRect(0,0,256,256);for(let i=0;i<1500;i++){x.fillStyle=spots[i%spots.length];x.globalAlpha=.2+Math.random()*.3;x.fillRect(Math.random()*256,Math.random()*256,2+Math.random()*6,2+Math.random()*6)}x.globalAlpha=1;const t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(16,16);return t}
+function ground(base,spots,size){const m=new THREE.Mesh(new THREE.PlaneGeometry(size,size),new THREE.MeshLambertMaterial({map:gtex(base,spots)}));m.rotation.x=-Math.PI/2;m.receiveShadow=true;add(m)}
+function setEnv(sky,dens,hemi,sunC,sunI){scene.background=new THREE.Color(sky);scene.fog=new THREE.FogExp2(sky,dens);add(new THREE.HemisphereLight(hemi||0xb8c4d8,0x3a3326,.85));
+ sun=new THREE.DirectionalLight(sunC||0xffe2b0,sunI||.8);sun.position.set(18,30,10);sun.castShadow=qual>0;sun.shadow.mapSize.set(1024,1024);const c=sun.shadow.camera;c.left=-40;c.right=40;c.top=40;c.bottom=-40;c.near=1;c.far=90;add(sun)}
+function lamp(x,z,col,inten){const m=custom('lamp',x,z);if(!m){cyl(.07,.09,3.4,0x2a2a2a,x,z);const s=new THREE.Mesh(new THREE.SphereGeometry(.2,8,6),new THREE.MeshBasicMaterial({color:col||0xffd9a0}));s.position.set(x,3.5,z);add(s)}
+ if(lamps.length<4){const l=new THREE.PointLight(col||0xffc880,inten||1.15,17);l.position.set(x,3.4,z);add(l);lamps.push(l)}}
+function hut(x,z,w,d){const c=custom('hut',x,z);if(c){coll.push({x0:x-w/2,x1:x+w/2,z0:z-d/2,z1:z+d/2});return}
+ box(w,3,d,0x6b5a42,x,z,0,true);const r1=A.bx(w+.8,.18,d/2+.9,0x4a3a2a,x,3.75,z-d/4),r2=A.bx(w+.8,.18,d/2+.9,0x4a3a2a,x,3.75,z+d/4);r1.rotation.x=-.45;r2.rotation.x=.45;add(r1);add(r2);box(.9,1.8,.1,0x2a2018,x,z+d/2+.02,0)}
+function tent(x,z){if(!custom('tent',x,z))cone(2.3,2.7,0x7a7458,x,z,6);coll.push({x0:x-1.3,x1:x+1.3,z0:z-1.3,z1:z+1.3})}
+function crates(x,z){if(!custom('crate',x,z)){box(1.2,1.1,1.2,0x8a6a3a,x,z,0);box(1.2,1.1,1.2,0x7a5a2e,x+1.3,z,0);box(1.1,1,1.1,0x9a7a44,x+.6,z,1.1)}coll.push({x0:x-.8,x1:x+2,z0:z-.8,z1:z+.8})}
+function fenceX(xa,xb,z,gap){for(let x=xa;x<xb;x+=2){box(.15,1.3,.15,0x4a3a2a,x,z,0);const gp=gap&&x>=gap[0]&&x<gap[1];if(!gp){box(2,.1,.1,0x5a4a34,x+1,z,.5);box(2,.1,.1,0x5a4a34,x+1,z,.95);coll.push({x0:x,x1:x+2,z0:z-.2,z1:z+.2})}}}
+function tree(x,z,bare){if(custom('tree',x,z))return;cyl(.18,.26,2.8,0x4a3826,x,z,0,6);if(!bare){cone(1.6,3.8,0x2c4026,x,z,6).position.y=4.3;}else{box(.1,1.6,.1,0x3a2a1c,x+.4,z,2).rotation.z=.8}coll.push({x0:x-.4,x1:x+.4,z0:z-.4,z1:z+.4})}
+function trees(r,n,bare){for(let i=0;i<n;i++){const a=i/n*Math.PI*2+rnd(-.1,.1),d=r+rnd(0,8);tree(Math.cos(a)*d,Math.sin(a)*d,bare)}}
+function bounds(h){bound=h;[[-h-6,-h,-120,120],[h,h+6,-120,120],[-120,120,-h-6,-h],[-120,120,h,h+6]].forEach(a=>coll.push({x0:a[0],x1:a[1],z0:a[2],z1:a[3]}))}
+function crater(x,z,r){const m=new THREE.Mesh(new THREE.CircleGeometry(r,14),new THREE.MeshLambertMaterial({color:0x26231c}));m.rotation.x=-Math.PI/2;m.position.set(x,.03,z);add(m)}
+function sandbags(xa,xb,z,h){for(let x=xa;x<xb;x+=3){box(3,h||1.1,1.5,0x8a7a5a,x+1.5,z,0)}coll.push({x0:xa,x1:xb,z0:z-.8,z1:z+.8})}
+function wire(xa,xb,z){for(let x=xa;x<xb;x+=2.4){box(.06,1.1,.06,0x2a2a2a,x,z,0);box(2.4,.03,.03,0x3a3a3a,x+1.2,z,.5).rotation.z=rnd(-.2,.2);box(2.4,.03,.03,0x3a3a3a,x+1.2,z,.9)}}
+function smoke(x,z){const m=new THREE.Mesh(new THREE.CylinderGeometry(1.8,.6,26,8),new THREE.MeshBasicMaterial({color:0x4a4a4a,transparent:true,opacity:.28,depthWrite:false}));m.position.set(x,13,z);add(m)}
+/* ---------- mekânlar ---------- */
+const BUILD={
+camp(){setEnv(0x7a8594,.017);ground('#4a5638',['#3d472e','#5a6540','#4b3f2a'],140);
+ hut(-16,-10,12,5);hut(-16,3,12,5);hut(17,-10,12,5);for(let i=0;i<5;i++)tent(-22+i*9,-26);
+ fenceX(-26,26,16,[19,23]);crates(8,-6);lamp(-6,7);lamp(6,7);lamp(0,-14);lamp(-20,16);
+ box(90,.2,5,0x3a3430,0,38,0);box(90,.12,.15,0x555555,0,37,.2);box(90,.12,.15,0x555555,0,39,.2);
+ box(9,2.6,2.6,0x1a1a1a,-8,38,.6);const b=cyl(1.2,1.2,6,0x222222,-12,38,1.6,10);b.rotation.z=Math.PI/2;b.rotation.y=Math.PI/2;cyl(.4,.5,1.6,0x111111,-14,38,3.4);
+ trees(34,26);bounds(30);P.x=0;P.z=12},
+village(){setEnv(0x8d9298,.03);ground('#5a5238',['#3a3426','#6a6244','#2f2a1e'],150);
+ // çiftlik evi (kırık duvarlı)
+ box(12,3.4,.5,0x7a6a54,0,-1.2,0,true);box(.5,3.4,7,0x7a6a54,-6,2.3,0,true);box(.5,2,7,0x7a6a54,6,2.3,0,true);box(4,3.4,.5,0x7a6a54,-4,5.8,0,true);box(4,1.2,.5,0x7a6a54,4,5.8,0,true);
+ box(.3,.3,7,0x3a2a1c,-3,2.3,3.2);box(.3,.3,7,0x3a2a1c,3,2.3,3.2);
+ // ahır
+ box(.5,3,8,0x6a5a3e,-23,-6,0,true);box(.5,3,8,0x6a5a3e,-13,-6,0,true);box(10,3,.5,0x6a5a3e,-18,-10,0,true);box(3,3,.5,0x6a5a3e,-21.5,-2,0,true);box(3,3,.5,0x6a5a3e,-14.5,-2,0,true);box(10,.15,8,0x8a7a3a,-18,-6,0);
+ // mahzen kapağı
+ const c=box(2.4,.3,1.6,0x2a2218,12,-3,.4);c.rotation.z=.4;
+ box(8,2.6,.5,0x6a5a46,-20,12,0,true);box(.5,2.6,5,0x6a5a46,-24,14,0,true);box(7,1.6,.5,0x6a5a46,21,9,0,true);
+ sandbags(-16,16,18,1.2);wire(-20,20,-12);wire(-20,20,-22);
+ [[-8,-6,2.2],[4,-14,2.6],[-3,-24,2.4],[10,-20,2],[15,-8,1.8],[-12,-18,2.2]].forEach(a=>crater(a[0],a[1],a[2]));
+ box(8,.2,8,0x4a4538,0,-34,0);cone(3.4,3,0x6a6a50,0,-36,8);coll.push({x0:-2,x1:2,z0:-38,z1:-34});
+ smoke(-30,-28);smoke(28,-30);smoke(32,-8);lamp(-8,14,0xffb060,.9);lamp(8,14,0xffb060,.9);
+ trees(36,30,true);bounds(34);P.x=0;P.z=20},
+hospital(){setEnv(0x26231d,.012,0x7a6a52);scene.fog.density=.012;
+ box(44,.2,32,0x6b5a3a,0,0,-.05);for(const s of[-1,1]){box(.6,6,32,0x4a3a28,s*22,0,0,true);}box(44,6,.6,0x4a3a28,0,-16,0,true);box(44,6,.6,0x4a3a28,0,16,0,true);
+ for(let x=-18;x<=18;x+=6)box(.5,.5,32,0x3a2a1c,x,0,6);for(let i=0;i<8;i++){const x=i<4?-17:17,z=-10+(i%4)*5;box(.9,.45,2,0xcfc8b4,x,z,0);box(.9,.1,2.1,0x5a4a3a,x,z,.4)}
+ box(1.6,.01,.01,0xffffff,0,15.6,3.5);box(2.4,1.8,.1,0xe8e8e8,0,15.55,2.5);box(.4,1.4,.12,0xb02020,0,15.5,2.7);box(1.2,.4,.12,0xb02020,0,15.5,3.2);
+ for(let i=0;i<4;i++)box(1.4,.9,1,0x9a8a4a,-8+i*5,13,0,true);
+ box(1.6,2.2,.8,0x4a3a2a,12,9,0,true);box(1.8,.8,1.2,0x5a4a3a,-12,9,0,true);cyl(.5,.5,1,0x5a3a22,0,12,0,10);
+ [[-10,-8],[10,-8],[0,4],[0,-12]].forEach(a=>lamp(a[0],a[1],0xffb870,1.2));bounds(21);P.x=0;P.z=11},
+noman(){setEnv(0x18202f,.026,0x6a7a96,0xa8b8d8,.55);ground('#dfe6ee',['#c8d2de','#f2f6fa','#aeb8c6'],160);
+ sandbags(-34,34,15,1.3);sandbags(-34,34,-19,1.3);wire(-30,30,0);wire(-30,30,-6);
+ [[-10,5,3],[8,-8,2.6],[16,4,2.2],[-18,-6,2.4]].forEach(a=>crater(a[0],a[1],a[2]));
+ box(1,.15,1,0x5a3a22,-1,8,0);cone(1.1,2.6,0x1d3d22,-1,8,6);for(let i=0;i<8;i++){const a=i/8*6.28,s=new THREE.Mesh(new THREE.SphereGeometry(.07,5,4),new THREE.MeshBasicMaterial({color:i%2?0xffd070:0xff7050}));s.position.set(-1+Math.cos(a)*.7,.9+(i%4)*.5,8+Math.sin(a)*.7);add(s)}
+ for(let x=-28;x<=28;x+=8){const s=new THREE.Mesh(new THREE.SphereGeometry(.18,6,5),new THREE.MeshBasicMaterial({color:0xffcf80}));s.position.set(x,1.7,-19);add(s);if(Math.abs(x)%16==0&&lamps.length<4){const l=new THREE.PointLight(0xffc070,.9,15);l.position.set(x,1.8,-18);add(l);lamps.push(l)}}
+ lamp(-6,13,0xffc070,.9);lamp(10,13,0xffc070,.9);
+ const g=new THREE.BufferGeometry(),p=new Float32Array(300*3);for(let i=0;i<300;i++){const a=rnd(0,6.28),e=rnd(.2,1.4);p[i*3]=Math.cos(a)*Math.cos(e)*130;p[i*3+1]=Math.sin(e)*100+5;p[i*3+2]=Math.sin(a)*Math.cos(e)*130}g.setAttribute('position',new THREE.BufferAttribute(p,3));add(new THREE.Points(g,new THREE.PointsMaterial({color:0xffffff,size:1.1,fog:false})));
+ bounds(32);P.x=0;P.z=11}};
+/* ---------- yağmur / kar ---------- */
+function mkPrecip(kind){if(precip){scene.remove(precip);precip=null}pkind=kind;if(kind!='rain'&&kind!='snow')return;
+ const n=(kind=='rain'?[250,500,800]:[200,400,650])[qual],pos=new Float32Array(n*(kind=='rain'?6:3));
+ for(let i=0;i<n;i++){const x=rnd(-20,20),y=rnd(0,16),z=rnd(-20,20);if(kind=='rain'){pos.set([x,y,z,x-.05,y-.6,z],i*6)}else pos.set([x,y,z],i*3)}
+ const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(pos,3));
+ precip=add(kind=='rain'?new THREE.LineSegments(g,new THREE.LineBasicMaterial({color:0x9aa8b8,transparent:true,opacity:.45})):new THREE.Points(g,new THREE.PointsMaterial({color:0xffffff,size:.12})));precip.frustumCulled=false;precip.userData={n,g}}
+function updPrecip(dt){if(!precip)return;const a=precip.geometry.attributes.position,n=precip.userData.n,rain=pkind=='rain',st=rain?6:3,ar=a.array;
+ for(let i=0;i<n;i++){const k=i*st;if(rain){let y=ar[k+1]-dt*18;if(y<0){y+=16;ar[k]=P.x+rnd(-20,20);ar[k+2]=P.z+rnd(-20,20)}ar[k+1]=y;ar[k+3]=ar[k]-.05;ar[k+4]=y-.6;ar[k+5]=ar[k+2]}else{ar[k+1]-=dt*1.4;ar[k]+=Math.sin(tm+i)*dt*.3;if(ar[k+1]<0){ar[k+1]+=16;ar[k]=P.x+rnd(-20,20);ar[k+2]=P.z+rnd(-20,20)}}}
+ a.needsUpdate=true}
+/* ---------- varlıklar ---------- */
+function label(text){const c=document.createElement('canvas');c.width=256;c.height=64;const x=c.getContext('2d');x.font='700 26px serif';x.textAlign='center';x.fillStyle='#000a';x.fillRect(10,8,236,40);x.fillStyle='#f0e6c8';x.fillText(text,128,38);const s=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(c),transparent:true,depthTest:false}));s.scale.set(2.6,.65,1);return s}
+function mkEnt(d){const e={d,id:d.id,k:d.k,x:d.x,z:d.z,name:d.name||G.story.name(d.id)||'',r:Math.PI,mv:0,talking:false};
+ if(d.k=='npc'){e.g=A.character(d.m);e.g.position.set(d.x,0,d.z);e.g.rotation.y=Math.PI;add(e.g);e.lab=label(e.name);e.lab.position.set(d.x,2.45,d.z);e.lab.visible=false;add(e.lab)}
+ else{e.g=new THREE.Mesh(new THREE.OctahedronGeometry(.2),new THREE.MeshBasicMaterial({color:0xffd870}));e.g.position.set(d.x,1.5,d.z);add(e.g);e.lab=label(e.name);e.lab.position.set(d.x,2.1,d.z);e.lab.visible=false;add(e.lab)}
+ return e}
+W.refresh=S=>{const want=G.story.ents(S),ids={};want.forEach(d=>ids[d.id]=1);
+ for(const id in emap)if(!ids[id]){const e=emap[id];scene.remove(e.g);scene.remove(e.lab);delete emap[id]}
+ want.forEach(d=>{if(!emap[d.id])emap[d.id]=mkEnt(d);else emap[d.id].d=d});ents=Object.values(emap)};
+W.load=S=>{if(scene){while(scene.children.length)scene.remove(scene.children[0])}
+ coll=[];emap={};ents=[];lamps=[];precip=null;arty.items=[];focusE=null;
+ const c=G.story.CH[S.ch];curLoc=c.loc;BUILD[c.loc]();
+ P.g=A.character('player');add(P.g);P.mv=0;P.sx=P.x;P.sz=P.z;if(S.ps&&S.ps.loc==c.loc){P.x=S.ps.x;P.z=S.ps.z}
+ P.r=Math.PI;cs.yaw=0;cs.pitch=.38;W.refresh(S);mkPrecip(c.weather);G.audio.setWeather(c.weather);G.audio.mood(S.ch==4?'xmas':S.ch==2?'tense':'calm');arty.on=false;W.menuOrbit=false};
+W.menuScene=()=>{G.newState();W.load(G.S());W.menuOrbit=true};
+W.focus=e=>{focusE=e;if(e)e.talking=true};W.unfocus=()=>{if(focusE)focusE.talking=false;focusE=null};
+W.interact=()=>W.near||null;
+W.setArtillery=on=>{arty.on=!!on};
+/* ---------- topçu ateşi ---------- */
+function updArty(dt){if(!arty.on||!W.active)return;arty.tm-=dt;if(arty.tm<=0){arty.tm=rnd(2.6,4.8);const a=rnd(0,6.28),d=rnd(3,9),x=P.x+Math.cos(a)*d,z=P.z+Math.sin(a)*d;
+  const ring=new THREE.Mesh(new THREE.RingGeometry(.85,1.1,24),new THREE.MeshBasicMaterial({color:0xff3a2a,transparent:true,opacity:.8,side:THREE.DoubleSide}));ring.rotation.x=-Math.PI/2;ring.position.set(x,.07,z);ring.scale.setScalar(3);add(ring);
+  arty.items.push({x,z,t:1.7,ring,boom:false});G.audio.sfx('warn')}
+ for(let i=arty.items.length-1;i>=0;i--){const it=arty.items[i];it.t-=dt;
+  if(it.t>0){it.ring.scale.setScalar(1+Math.max(0,it.t)*1.2)}
+  else if(!it.boom){it.boom=true;it.ring.material.color.setHex(0xffd070);it.ring.scale.setScalar(3.4);shake=.7;G.audio.sfx('boom');if(Math.hypot(P.x-it.x,P.z-it.z)<3.4&&W.onHit)W.onHit(25)}
+  else if(it.t<-.5){scene.remove(it.ring);arty.items.splice(i,1)}}}
+/* ---------- döngü ---------- */
+function blocked(x,z){for(const c of coll)if(x>c.x0-.35&&x<c.x1+.35&&z>c.z0-.35&&z<c.z1+.35)return true;for(const e of ents)if(e.k=='npc'){const dx=x-e.x,dz=z-e.z;if(dx*dx+dz*dz<.5)return true}return false}
+const lerpA=(a,b,k)=>{let d=((b-a+Math.PI)%(2*Math.PI)+2*Math.PI)%(2*Math.PI)-Math.PI;return a+d*k};
+let stepT=0;
+W.update=dt=>{if(!R)return;tm+=dt;const S=G.S();
+ if(W.menuOrbit){cs.yaw+=dt*.12}
+ // oyuncu hareketi
+ let ix=W.input.x,iy=W.input.y;if(W.active&&!focusE){if(keys.KeyA||keys.ArrowLeft)ix-=1;if(keys.KeyD||keys.ArrowRight)ix+=1;if(keys.KeyW||keys.ArrowUp)iy+=1;if(keys.KeyS||keys.ArrowDown)iy-=1}else{ix=iy=0}
+ const l=Math.hypot(ix,iy);P.mv=0;
+ if(l>.08){const n=Math.min(1,l);ix/=l;iy/=l;const run=W.input.run||keys.ShiftLeft,sp=(run?5.4:3.3)*n,sy=Math.sin(cs.yaw),cy=Math.cos(cs.yaw),dx=(-sy*iy+cy*ix)*sp*dt,dz=(-cy*iy-sy*ix)*sp*dt;
+  if(!blocked(P.x+dx,P.z))P.x+=dx;if(!blocked(P.x,P.z+dz))P.z+=dz;P.x=Math.max(-bound,Math.min(bound,P.x));P.z=Math.max(-bound-8,Math.min(bound,P.z));P.r=lerpA(P.r,Math.atan2(dx,dz),Math.min(1,dt*12));P.mv=1;
+  stepT-=dt;if(stepT<=0){stepT=run?.28:.42;G.audio.sfx('step')}}
+ if(P.g){P.g.position.set(P.x,0,P.z);P.g.rotation.y=P.r;A.animate(P.g,dt,tm,P.mv,false)}
+ // NPC'ler
+ W.near=null;let best=3;
+ for(const e of ents){const dx=P.x-e.x,dz=P.z-e.z,d=Math.hypot(dx,dz);
+  if(e.k=='npc'){const want=(e.talking||d<4.5)?Math.atan2(dx,dz):Math.PI;e.r=lerpA(e.r,want,Math.min(1,dt*(e.talking?6:2)));e.g.rotation.y=e.r;A.animate(e.g,dt,tm+e.x,false,e.talking)}
+  else{e.g.position.y=1.5+Math.sin(tm*2+e.x)*.12;e.g.rotation.y+=dt}
+  e.lab.visible=d<8;if(!e.talking&&W.active&&d<(e.k=='npc'?2.7:3.1)&&d<best){best=d;W.near=e}}
+ updArty(dt);updPrecip(dt);
+ if(lamps.length)lamps.forEach((L,i)=>{L.intensity=(L.userData.b||(L.userData.b=L.intensity))*(0.92+.08*Math.sin(tm*13+i*3)+(Math.random()<.02?-.15:0))});
+ // kamera
+ let tx,ty,tz,lx,ly,lz;
+ if(focusE){const dx=P.x-focusE.x,dz=P.z-focusE.z,d=Math.hypot(dx,dz)||1,ux=dx/d,uz=dz/d;tx=focusE.x+ux*2.4-uz*.9;tz=focusE.z+uz*2.4+ux*.9;ty=1.75;lx=focusE.x;ly=1.62;lz=focusE.z}
+ else{const cpitch=Math.cos(cs.pitch),sy=Math.sin(cs.yaw),cy=Math.cos(cs.yaw);tx=P.x+sy*cpitch*cs.dist;tz=P.z+cy*cpitch*cs.dist;ty=1.5+Math.sin(cs.pitch)*cs.dist;lx=P.x;ly=1.45;lz=P.z}
+ const k=1-Math.exp(-dt*(focusE?4.5:12));cp.x+=(tx-cp.x)*k;cp.y+=(ty-cp.y)*k;cp.z+=(tz-cp.z)*k;cp.lx+=(lx-cp.lx)*k;cp.ly+=(ly-cp.ly)*k;cp.lz+=(lz-cp.lz)*k;
+ shake=Math.max(0,shake-dt*1.4);const sh=shake*.35;
+ cam.position.set(cp.x+rnd(-sh,sh),cp.y+rnd(-sh,sh),cp.z+rnd(-sh,sh));cam.lookAt(cp.lx,cp.ly,cp.lz);
+ R.render(scene,cam)};
+})(window.G=window.G||{});
+
+</script>
+<script>/* src/ui.js */
+/* 1914 — ARAYÜZ: menüler, HUD, diyalog, günlük, kayıt, ayarlar, model içe aktarma, bölüm özeti, finaller. */
+(function(G){
+const $=i=>document.getElementById(i),W=G.W,Au=G.audio,A=G.A,UI=G.ui={};
+let SET=Object.assign({m:.8,mu:.45,sf:.8,q:2,ts:1,cf:1},(()=>{try{return JSON.parse(localStorage.getItem('1914_set')||'{}')}catch(e){return{}}})());
+const SCR=['menu','settings','pause','saves','journal','import','about','card','summary','ending'];
+const show=id=>SCR.forEach(s=>$(s).classList.toggle('show',s==id)),hideScr=()=>SCR.forEach(s=>$(s).classList.remove('show'));
+let state='menu',back='menu',dlgOpen=false,D=null,typing=false,full='',ti=0,tt=0,sel=-1,curId='',tstT=0,artyWarned=0,acc=0,touch=false;
+const toast=t=>{const e=$('toast');e.textContent=t;e.style.opacity=1;clearTimeout(tstT);tstT=setTimeout(()=>e.style.opacity=0,2800)};UI.toast=toast;UI.state=()=>state;UI.dlgOpen=()=>dlgOpen;
+const saveSet=()=>{try{localStorage.setItem('1914_set',JSON.stringify(SET))}catch(e){}};
+function applySet(){Au.vol.m=SET.m;Au.vol.mu=SET.mu;Au.vol.sf=SET.sf;W.setQuality(+SET.q);$('sM').value=SET.m;$('sMu').value=SET.mu;$('sSf').value=SET.sf;$('sQ').value=SET.q;$('sTs').value=SET.ts;$('sCf').checked=!!SET.cf}
+const autosave=()=>{const S=G.S();S.ps={loc:S.loc,x:W.P.x,z:W.P.z};G.save(0)};
+/* ---------- akış ---------- */
+UI.menu=()=>{state='menu';W.active=false;dlgOpen=false;['hud','dlg'].forEach(i=>$(i).classList.add('hide'));$('l1').classList.remove('on');$('l2').classList.remove('on');$('mCont').disabled=!G.hasSave();W.menuScene();show('menu')};
+UI.newGame=()=>{G.newState();Au.start();UI.chapter()};
+UI.chapter=()=>{const S=G.S(),c=G.story.CH[S.ch];G.story.begin(S);W.load(S);state='card';$('hud').classList.add('hide');$('cDate').textContent=c.date;$('cTitle').textContent=c.title;$('cText').textContent='';$('cHint').style.opacity=0;show('card');
+ let i=0;const id=setInterval(()=>{i+=2;$('cText').textContent=c.intro.slice(0,i);if(i>=c.intro.length){clearInterval(id);$('cHint').style.opacity=1}},22);$('card').onclick=()=>{clearInterval(id);$('cText').textContent=c.intro;if($('cHint').style.opacity==1){$('card').onclick=null;UI.play()}else $('cHint').style.opacity=1}};
+UI.play=()=>{hideScr();state='play';$('hud').classList.remove('hide');W.active=true;artyWarned=0;refreshHud();autosave()};
+UI.resume=()=>{Au.start();const S=G.S();G.story.begin(S);W.load(S);UI.play()};
+function refreshHud(){const S=G.S(),c=G.story.CH[S.ch];G.story.update(S);$('loc').textContent=c.title.replace('Bölüm ','B');
+ $('objl').innerHTML=G.story.objectives(S).slice(-6).map(o=>'<li class="'+(o.d?'d':'')+'">'+(o.d?'✔ ':'• ')+o.t+'</li>').join('');$('hpb').firstChild.style.width=S.hp+'%'}
+/* ---------- diyalog ---------- */
+UI.openDialog=ent=>{const S=G.S();curId=G.story.talkId(ent.d,S);if(!curId||!G.dlg)return;dlgOpen=true;W.active=false;W.input.x=W.input.y=0;W.focus(ent);['l1','l2'].forEach(i=>$(i).classList.add('on'));$('hud').classList.add('hide');$('dlg').classList.remove('hide');D=G.dlg.open(curId);renderNode();Au.sfx('ui')};
+function renderNode(){const sp=G.story.C[D.speaker]||G.story.C._;$('dname').textContent=sp.n;$('dname').style.color=sp.c;$('dtext').className=D.speaker=='_'?'n':'';$('dch').innerHTML='';$('dhint').textContent='';sel=-1;full=D.text;ti=0;typing=true;clearInterval(tt);
+ const sp2=+SET.ts;if(!sp2){finishType();return}$('dtext').textContent='';tt=setInterval(()=>{ti+=Math.max(1,Math.round(sp2*1.4));$('dtext').textContent=full.slice(0,ti);if(ti>=full.length)finishType()},22)}
+function finishType(){typing=false;clearInterval(tt);$('dtext').textContent=full;
+ if(D.choices&&D.choices.length){D.choices.forEach((c,i)=>{const b=document.createElement('button');b.textContent=(i+1)+'. '+c.t;b.onclick=e=>{e.stopPropagation();pick(i)};$('dch').appendChild(b)});$('dhint').textContent=SET.cf?'Bir seçeneğe dokun; onaylamak için tekrar dokun':'Bir seçeneğe dokun'}
+ else $('dhint').textContent=D.next?'▶ devam (dokun / Boşluk)':'▶ bitir (dokun / Boşluk)'}
+function pick(i){if(typing||!D.choices)return;const bs=$('dch').children;if(SET.cf&&sel!==i){sel=i;[...bs].forEach((b,k)=>b.classList.toggle('sel',k==i));Au.sfx('ui');return}
+ const c=D.choices[i],fx=typeof c.fx=='function'?c.fx(G.S()):c.fx;if(/log=/.test(fx||''))toast('Bu karar hatırlanacak.');Au.sfx('page');const nx=D.choose(i);if(nx)renderNode();else endDialog()}
+function advance(){if(typing){finishType();return}if(D.choices)return;const nx=D.advance();if(nx)renderNode();else endDialog()}
+function endDialog(){const S=G.S(),id=curId;dlgOpen=false;D=null;$('dlg').classList.add('hide');['l1','l2'].forEach(i=>$(i).classList.remove('on'));W.unfocus();G.story.after(id);W.refresh(S);$('hud').classList.remove('hide');refreshHud();
+ if(G.story.chapterEnded(S)){state='summary-wait';setTimeout(UI.summary,700);return}W.active=true;autosave()}
+UI.advance=advance;UI.pick=pick;UI.endDialog=endDialog;
+$('dlg').addEventListener('click',()=>{if(dlgOpen)advance()});
+W.onInteract=()=>{if(!W.active||dlgOpen)return;const e=W.near;if(e)UI.openDialog(e)};
+W.onHit=n=>{const S=G.S();G.fx('hp-'+n);$('flash').style.opacity=.55;setTimeout(()=>$('flash').style.opacity=0,300);Au.sfx('hit');if(S.hp<=0){S.f.wounded=1;S.hp=40;G.log('Topçu ateşinde ağır yaralandın; arkadaşların seni geriye sürükledi.');W.P.x=W.P.sx;W.P.z=W.P.sz;toast('Ağır yaralandın! Arkadaşların seni geriye sürükledi.')}refreshHud()};
+/* ---------- HUD tick ---------- */
+UI.tick=dt=>{if(state!='play'||dlgOpen)return;const S=G.S(),c=G.story.CH[S.ch],e=W.near,p=$('prompt');
+ if(e&&W.active){p.classList.remove('hide');p.textContent=(touch?'':'E · ')+(e.k=='npc'?'Konuş: ':'İncele: ')+(e.name||'');$('bAct').textContent=e.k=='npc'?'KONUŞ':'İNCELE'}else p.classList.add('hide');
+ acc+=dt;if(acc>.4){acc=0;const on=!!(c.artillery&&c.artillery(S));W.setArtillery(on&&W.active);if(on&&!artyWarned){artyWarned=1;toast('Topçu ateşi! Kırmızı halkalardan uzak dur.');Au.mood('tense')}if(!on&&artyWarned==1){artyWarned=2;Au.mood('calm')}if(S.hp<100&&!on){S.hp=Math.min(100,S.hp+1);$('hpb').firstChild.style.width=S.hp+'%'}}};
+/* ---------- günlük ---------- */
+const PR={finch_letter:'Finch’in mektubunu annesine ulaştırma sözü',doyle_confess:'Doyle’un Hale’e itirafı'},EV={boot_prints:'Çite giden bot izleri',tin_lids:'Boş konserve kapakları ve çocuk ayak izleri'};
+function jtab(t){const S=G.S(),C=G.story.C;let h='';
+ if(t=='q')h='<b>'+G.story.CH[S.ch].title+'</b><ul class="hist">'+G.story.objectives(S).map(o=>'<li>'+(o.d?'✔ ':'• ')+o.t+'</li>').join('')+'</ul>';
+ else if(t=='h')h=S.hist.length?'<ol class="hist">'+S.hist.map(x=>'<li><span class="sub">B'+x.ch+'</span> '+x.text+'</li>').join('')+'</ol>':'<p class="sub">Henüz kayda geçen büyük bir karar yok.</p>';
+ else if(t=='c')h=['hale','finch','doyle','weiss','pem','clara'].map(id=>{const c=C[id],v=S.t[id]||0,dead=S.dead[id];return'<div class="bars"><b style="color:'+c.c+'">'+c.n+'</b> <span class="sub">'+c.age+' yaş'+(dead?' · öldü':'')+'</span><div><span class="b"><i style="'+(v>=0?'width:'+v*10+'%':'width:'+(-v*10)+'%;transform:translateX(-100%);background:#a63a2e')+'"></i></span><span>'+v+'</span></div><div class="sub">'+c.bio+'</div></div>'}).join('');
+ else h='<b>Sözler</b><ul class="hist">'+(Object.keys(S.pr).map(k=>'<li>'+(PR[k]||k)+' — '+(S.pk[k]?'tutuldu':S.pb[k]?'bozuldu':'açık')+'</li>').join('')||'<li class="sub">Henüz söz verilmedi.</li>')+'</ul><b>Kanıtlar</b><ul class="hist">'+(Object.keys(S.ev).map(k=>'<li>'+(EV[k]||k)+'</li>').join('')||'<li class="sub">Henüz kanıt yok.</li>')+'</ul>';
+ $('jbody').innerHTML=h}
+UI.journal=(t)=>{if(state=='play'){back='play';W.active=false}else back=state;state='journal';show('journal');jtab(t||'q')};
+document.querySelectorAll('[data-j]').forEach(b=>b.onclick=()=>jtab(b.dataset.j));
+$('jBack').onclick=()=>{if(back=='play'){hideScr();state='play';W.active=true}else{state=back;show(back)}};
+/* ---------- duraklatma / kayıt ---------- */
+UI.pause=()=>{if(state!='play'||dlgOpen)return;state='pause';W.active=false;show('pause')};
+$('pRes').onclick=()=>{hideScr();state='play';W.active=true};$('pJour').onclick=()=>{state='pause';UI.journalFrom('pause')};$('pSave').onclick=()=>UI.saves('pause');$('pSet').onclick=()=>UI.settings('pause');$('pMenu').onclick=()=>{autosave();UI.menu()};
+UI.journalFrom=from=>{back=from;state='journal';show('journal');jtab('q')};
+UI.settings=from=>{back=from;state='settings';show('settings')};$('setBack').onclick=()=>{state=back;show(back)};
+UI.saves=from=>{back=from;state='saves';renderSlots();show('saves')};$('saveBack').onclick=()=>{state=back;show(back)};
+function renderSlots(){const h=$('slots');h.innerHTML='';for(let s=0;s<4;s++){const i=G.slotInfo(s),d=document.createElement('div');d.className='row';d.innerHTML='<span><b>'+(s?'Yuva '+s:'Otomatik')+'</b><br><span class="sub">'+(i?i.d+' · Bölüm '+i.ch:'boş')+'</span></span>';
+ const sv=document.createElement('button');sv.textContent='KAYDET';sv.disabled=!s||back!='pause';sv.onclick=()=>{const S=G.S();S.ps={loc:S.loc,x:W.P.x,z:W.P.z};toast(G.save(s)?'Kaydedildi':'Kaydedilemedi');renderSlots()};
+ const ld=document.createElement('button');ld.textContent='YÜKLE';ld.disabled=!i;ld.onclick=()=>{if(G.load(s)){UI.resume()}else toast('Yüklenemedi')};d.append(sv,ld);h.appendChild(d)}}
+$('exp').onclick=()=>{const b=new Blob([G.exportSave()],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='1914-kayit.json';a.click()};
+$('impSb').onclick=()=>$('impS').click();$('impS').onchange=async e=>{try{G.importSave(await e.target.files[0].text());UI.resume()}catch(x){toast('Hata: '+x.message)}};
+/* ---------- model içe aktar ---------- */
+$('iRole').innerHTML=Object.keys(A.ROLES).map(k=>'<option value="'+k+'">'+A.ROLES[k]+'</option>').join('');
+UI.importPanel=()=>{back='menu';state='import';show('import')};
+$('iGo').onclick=async()=>{const f=$('iFile').files[0];if(!f){$('iMsg').textContent='Önce bir dosya seç.';return}try{const m=await A.importFile($('iRole').value,f,{scale:+$('iScale').value||0,y:+$('iY').value||0,rot:+$('iRot').value||0});$('iMsg').textContent=m.join('\n');W.menuScene()}catch(e){$('iMsg').textContent='HATA: '+e.message}};
+$('iReset').onclick=()=>{A.reset($('iRole').value);$('iMsg').textContent='Rol yer tutucuya döndürüldü.';W.menuScene()};$('iBack').onclick=()=>{state='menu';show('menu')};
+/* ---------- bölüm özeti & finaller ---------- */
+UI.summary=()=>{const S=G.S(),c=G.story.CH[S.ch];W.active=false;state='summary';$('sTitle').textContent=c.title+' — tamamlandı';
+ $('sHist').innerHTML=S.hist.filter(x=>x.ch==S.ch).map(x=>'<li>'+x.text+'</li>').join('')||'<li class="sub">Bu bölümde kayda geçen büyük bir karar vermedin.</li>';
+ $('sBars').innerHTML=['hale','finch','doyle','weiss','pem'].map(id=>{const v=S.t[id]||0;return'<div><span style="width:110px;color:'+G.story.C[id].c+'">'+G.story.C[id].n.split(' ').pop()+'</span><span class="b"><i style="'+(v>=0?'width:'+v*10+'%':'width:'+(-v*10)+'%;transform:translateX(-100%);background:#a63a2e')+'"></i></span><span>'+v+'</span></div>'}).join('');
+ autosave();show('summary')};
+$('sGo').onclick=()=>{const S=G.S();if(S.ch>=4){UI.ending();return}S.ch++;S.ps=null;UI.chapter()};
+UI.ending=()=>{const S=G.S(),e=G.endings.pick(S);state='ending';let seen={};try{seen=JSON.parse(localStorage.getItem('1914_ends')||'{}');seen[e.id]=1;localStorage.setItem('1914_ends',JSON.stringify(seen))}catch(x){}
+ $('eTag').textContent=(e.hidden?'GİZLİ FİNAL · ':'FİNAL · ')+Object.keys(seen).length+'/'+G.endings.list.length+' keşfedildi';$('eTitle').textContent=e.title;
+ $('eBody').innerHTML=e.t.map(p=>'<p>'+p+'</p>').join('')+'<hr style="border-color:#4a4632"><div class="sub t">KADERLER</div>'+G.endings.fates(S).map(p=>'<p style="margin:6px 0">'+p+'</p>').join('')+'<hr style="border-color:#4a4632"><div class="sub t">SENİ BU SONA GETİREN KARARLAR ('+S.hist.length+')</div><ul class="hist" style="text-align:left;font-size:15px">'+S.hist.map(x=>'<li>'+x.text+'</li>').join('')+'</ul>';
+ show('ending')};
+$('eMenu').onclick=()=>UI.menu();$('eNew').onclick=()=>UI.newGame();
+/* ---------- bağlama ---------- */
+UI.init=()=>{touch=matchMedia('(pointer:coarse)').matches||('ontouchstart' in window);if(!touch)['joy','bAct','bRun'].forEach(i=>$(i).classList.add('hide'));
+ applySet();
+ const bind=(id,k,f)=>$(id).oninput=e=>{SET[k]=e.target.type=='checkbox'?e.target.checked?1:0:+e.target.value;applySet();f&&f();saveSet()};bind('sM','m');bind('sMu','mu');bind('sSf','sf');bind('sQ','q',()=>W.load(G.S()));bind('sTs','ts');$('sCf').onchange=e=>{SET.cf=e.target.checked?1:0;saveSet()};
+ $('mNew').onclick=UI.newGame;$('mCont').onclick=()=>{let best=-1,bs=0;for(let s=0;s<4;s++){const i=G.slotInfo(s);if(i&&i.ts>=best){best=i.ts;bs=s}}if(G.load(bs))UI.resume()};
+ $('mSave').onclick=()=>UI.saves('menu');$('mSet').onclick=()=>UI.settings('menu');$('mImp').onclick=UI.importPanel;$('mAbout').onclick=()=>{state='about';show('about')};$('abBack').onclick=()=>{state='menu';show('menu')};
+ $('bPause').onclick=UI.pause;$('bJour').onclick=()=>UI.journal();$('bAct').onclick=()=>W.onInteract();let run=0;$('bRun').onclick=()=>{run=!run;W.input.run=run?1:0;$('bRun').classList.toggle('on',run)};
+ const joy=$('joy'),knob=joy.firstChild;let jid=null;const jm=e=>{const r=joy.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2;let dx=(e.clientX-cx)/50,dy=(e.clientY-cy)/50;const l=Math.hypot(dx,dy);if(l>1){dx/=l;dy/=l}W.input.x=dx;W.input.y=-dy;knob.style.transform='translate('+dx*34+'px,'+dy*34+'px)'};
+ joy.onpointerdown=e=>{jid=e.pointerId;joy.setPointerCapture(jid);jm(e)};joy.onpointermove=e=>{if(e.pointerId==jid)jm(e)};joy.onpointerup=joy.onpointercancel=()=>{jid=null;W.input.x=W.input.y=0;knob.style.transform=''};
+ addEventListener('keydown',e=>{if(dlgOpen){if(e.code=='Space'||e.code=='Enter'){e.preventDefault();if(D&&D.choices&&!typing){if(sel>=0)pick(sel)}else advance()}const n=+e.key;if(n>=1&&n<=4&&D&&D.choices&&!typing&&D.choices[n-1]){pick(n-1);}return}
+  if(e.code=='Escape'){if(state=='play')UI.pause();else if(state=='pause'){$('pRes').click()}}else if(e.code=='KeyJ'&&state=='play')UI.journal();else if(e.code=='KeyJ'&&state=='journal')$('jBack').click()})};
+})(window.G=window.G||{});
+
+</script>
+<script>/* src/main.js */
+/* 1914 — AÇILIŞ: Three.js var mı kontrol et, dünyayı ve arayüzü başlat, döngüyü çalıştır. */
+(function(G){
+function boot(){
+ if(typeof THREE==='undefined'){document.body.insertAdjacentHTML('beforeend','<div class="scr show"><h2>Three.js yüklenemedi</h2><p>Bu oyun 3D için internetten Three.js indirir. Bağlantını kontrol edip sayfayı yenile.</p></div>');return}
+ G.W.init(document.getElementById('gl'));G.ui.init();G.W.menuScene();G.ui.menu();
+ let last=performance.now();(function f(n){const dt=Math.min(.05,(n-last)/1000||0);last=n;try{G.W.update(dt);G.ui.tick(dt)}catch(e){console.error(e)}requestAnimationFrame(f)})(last)}
+window.addEventListener('load',boot);
+})(window.G=window.G||{});
+
+</script>
+
+</body></html>
